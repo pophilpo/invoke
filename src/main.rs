@@ -10,6 +10,8 @@ use ggez::{
     Context, GameResult,
 };
 
+use std::{env, path};
+
 const WINDOW_WIDTH: f32 = 1920.0;
 const WINDOW_HEIGHT: f32 = 1080.0;
 
@@ -49,8 +51,8 @@ impl EventHandler for MainState {
         self.last_spell_time += ctx.time.delta();
         if self.last_spell_time > std::time::Duration::new(1, 0) || self.objects.is_empty() {
             self.last_spell_time = std::time::Duration::new(0, 0);
-            self.speed += 1.0;
-            let new_spell = Spell::new(ctx, SpellType::Tornado, self.speed);
+            self.speed += 0.5;
+            let new_spell = Spell::new(ctx, self.speed);
             self.objects.push(new_spell);
         }
 
@@ -137,9 +139,19 @@ impl EventHandler for MainState {
 }
 
 fn main() -> GameResult {
+    let resource_dir = if let Ok(manifest_dir) = env::var("CARGO_MANIFEST_DIR") {
+        let mut path = path::PathBuf::from(manifest_dir);
+        path.push("resources");
+        path
+    } else {
+        path::PathBuf::from("./resources")
+    };
+
     let window_mode = ggez::conf::WindowMode::default().dimensions(WINDOW_WIDTH, WINDOW_HEIGHT); // Set your desired window size here
 
-    let cb = ggez::ContextBuilder::new("super_simple", "ggez").window_mode(window_mode);
+    let cb = ggez::ContextBuilder::new("super_simple", "ggez")
+        .window_mode(window_mode)
+        .add_resource_path(resource_dir);
     let (mut ctx, event_loop) = cb.build()?;
     let state = MainState::new(&mut ctx)?;
     event::run(ctx, event_loop, state)
