@@ -47,7 +47,7 @@ impl Spell {
             ctx,
             graphics::DrawMode::fill(),
             vec2(0., 0.),
-            100.0,
+            20.0,
             2.0,
             Color::WHITE,
         )

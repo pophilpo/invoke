@@ -19,7 +19,7 @@ struct MainState {
     objects: Vec<Spell>,
     input_buffer: Vec<char>,
     score: usize,
-
+    speed: f32,
     last_spell_time: std::time::Duration,
 }
 
@@ -31,6 +31,7 @@ impl MainState {
             objects: Vec::new(),
             input_buffer: Vec::with_capacity(3),
             last_spell_time: std::time::Duration::new(0, 0),
+            speed: 0.0,
             score: 0,
         })
     }
@@ -46,9 +47,10 @@ impl MainState {
 impl EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
         self.last_spell_time += ctx.time.delta();
-        if self.last_spell_time > std::time::Duration::new(5, 0) {
+        if self.last_spell_time > std::time::Duration::new(1, 0) || self.objects.is_empty() {
             self.last_spell_time = std::time::Duration::new(0, 0);
-            let new_spell = Spell::new(ctx, SpellType::Tornado, 1.0);
+            self.speed += 1.0;
+            let new_spell = Spell::new(ctx, SpellType::Tornado, self.speed);
             self.objects.push(new_spell);
         }
 
@@ -78,12 +80,12 @@ impl EventHandler for MainState {
         let text = graphics::Text::new(input).set_scale(48.).clone();
 
         let score_text = graphics::Text::new(format!("Score {}", self.score))
-            .set_scale(20.)
+            .set_scale(30.)
             .clone();
 
         canvas.draw(&text, Vec2::new(960.0, 1000.0));
 
-        canvas.draw(&score_text, Vec2::new(1000.0, 1000.0));
+        canvas.draw(&score_text, Vec2::new(1700.0, 1000.0));
 
         canvas.finish(ctx)?;
         Ok(())
