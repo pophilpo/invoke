@@ -1,40 +1,39 @@
+mod settings;
 mod spells;
 
-use spells::{Spell, SpellType};
+use settings::Settings;
+use spells::Spell;
 
 use ggez::{
     event::{self, EventHandler},
     glam::*,
-    graphics::{self, Color},
+    graphics,
     input::keyboard::{KeyCode, KeyInput},
     Context, GameResult,
 };
 
 use std::{env, path};
 
-const WINDOW_WIDTH: f32 = 1920.0;
-const WINDOW_HEIGHT: f32 = 1080.0;
-
 struct MainState {
     game_over: bool,
-    win: bool,
     objects: Vec<Spell>,
     input_buffer: Vec<char>,
     score: usize,
     speed: f32,
     last_spell_time: std::time::Duration,
+    settings: Settings,
 }
 
 impl MainState {
-    fn new(ctx: &mut Context) -> GameResult<Self> {
+    fn new(settings: Settings) -> GameResult<Self> {
         Ok(Self {
             game_over: false,
-            win: false,
             objects: Vec::new(),
             input_buffer: Vec::with_capacity(3),
             last_spell_time: std::time::Duration::new(0, 0),
             speed: 0.0,
             score: 0,
+            settings,
         })
     }
 
@@ -52,17 +51,17 @@ impl EventHandler for MainState {
         if self.last_spell_time > std::time::Duration::new(1, 0) || self.objects.is_empty() {
             self.last_spell_time = std::time::Duration::new(0, 0);
             self.speed += 0.5;
-            let new_spell = Spell::new(ctx, self.speed);
+            let new_spell = Spell::new(ctx, self.speed, &self.settings);
             self.objects.push(new_spell);
         }
 
         if self.game_over {
-            println!("Game is over. Win {}", self.win);
+            println!("Game is over.");
             return Ok(());
         } else {
             for object in self.objects.iter_mut() {
                 object.position.y += object.speed;
-                if object.position.y > WINDOW_HEIGHT {
+                if object.position.y > self.settings.window_height {
                     self.game_over = true;
                     return Ok(());
                 }
@@ -82,12 +81,12 @@ impl EventHandler for MainState {
         let text = graphics::Text::new(input).set_scale(48.).clone();
 
         let score_text = graphics::Text::new(format!("Score {}", self.score))
-            .set_scale(30.)
+            .set_scale(self.settings.score_font_size)
             .clone();
 
         canvas.draw(&text, Vec2::new(960.0, 1000.0));
 
-        canvas.draw(&score_text, Vec2::new(1700.0, 1000.0));
+        canvas.draw(&score_text, self.settings.score_position.unwrap());
 
         canvas.finish(ctx)?;
         Ok(())
@@ -147,12 +146,31 @@ fn main() -> GameResult {
         path::PathBuf::from("./resources")
     };
 
-    let window_mode = ggez::conf::WindowMode::default().dimensions(WINDOW_WIDTH, WINDOW_HEIGHT); // Set your desired window size here
+    let mut settings = Settings::new();
 
-    let cb = ggez::ContextBuilder::new("super_simple", "ggez")
+    let window_mode = ggez::conf::WindowMode::default()
+        .resizable(true)
+        .dimensions(settings.window_width, settings.window_height);
+
+    let cb = ggez::ContextBuilder::new("Invoke", "pophilpo")
         .window_mode(window_mode)
         .add_resource_path(resource_dir);
     let (mut ctx, event_loop) = cb.build()?;
-    let state = MainState::new(&mut ctx)?;
+    settings.calculate_score_position(&mut ctx);
+
+    settings.change_resolution(&mut ctx, 640.0, 800.0);
+
+    settings.calculate_score_position(&mut ctx);
+
+    settings.calculate_score_position(&mut ctx);
+    let window_mode = ggez::conf::WindowMode::default()
+        .resizable(true)
+        .dimensions(settings.window_width, settings.window_height);
+
+    ctx.gfx.set_mode(window_mode)?;
+
+    println!("{:?}", settings);
+
+    let state = MainState::new(settings)?;
     event::run(ctx, event_loop, state)
 }

@@ -1,8 +1,6 @@
+use crate::settings::Settings;
 use ggez::{glam::*, graphics, Context};
 use rand::{seq::SliceRandom, Rng};
-
-const WINDOW_WIDTH: f32 = 1920.0;
-const WINDOW_HEIGHT: f32 = 1080.0;
 
 pub struct Position {
     pub x: f32,
@@ -10,10 +8,10 @@ pub struct Position {
 }
 
 impl Position {
-    pub fn new() -> Self {
+    pub fn new(settings: &Settings) -> Self {
         let mut rng = rand::thread_rng();
         let y = 0.0;
-        let x = rng.gen_range(200..WINDOW_HEIGHT as u32) as f32;
+        let x = rng.gen_range(72..(settings.window_width - 72.0) as u32) as f32;
 
         Self { x, y }
     }
@@ -41,8 +39,8 @@ pub struct Spell {
 }
 
 impl Spell {
-    pub fn new(ctx: &mut Context, speed: f32) -> Self {
-        let position = Position::new();
+    pub fn new(ctx: &mut Context, speed: f32, settings: &Settings) -> Self {
+        let position = Position::new(settings);
 
         let spells = [
             SpellType::Alacrity,
