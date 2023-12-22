@@ -2,7 +2,7 @@ mod game_state;
 mod settings;
 mod spells;
 
-use game_state::{MainState, MenuState, StateMachine};
+use game_state::{MenuState, StateMachine};
 use settings::Settings;
 
 use ggez::{event, GameResult};

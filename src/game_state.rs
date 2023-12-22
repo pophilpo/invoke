@@ -1,18 +1,15 @@
 use crate::settings::Settings;
 use crate::spells::Spell;
 
-use std::{env, path};
-
 use ggez::{
-    event::{self, EventHandler, EventLoop},
+    event::EventHandler,
     glam::*,
     graphics::{self, Color, Drawable, Rect},
     input::keyboard::{KeyCode, KeyInput},
-    winit::event_loop,
     Context, GameResult,
 };
 
-enum Transition {
+pub enum Transition {
     None,
     Menu,
     Game,
@@ -71,9 +68,9 @@ impl GameState for MainState {
     fn mouse_button_up_event(
         &mut self,
         _ctx: &mut Context,
-        button: ggez::event::MouseButton,
-        x: f32,
-        y: f32,
+        _button: ggez::event::MouseButton,
+        _x: f32,
+        _y: f32,
     ) -> GameResult<Transition> {
         Ok(Transition::None)
     }
@@ -203,7 +200,7 @@ impl MenuState {
 }
 
 impl GameState for MenuState {
-    fn update(&mut self, ctx: &mut Context) -> GameResult<Transition> {
+    fn update(&mut self, _ctx: &mut Context) -> GameResult<Transition> {
         Ok(Transition::None)
     }
 
@@ -248,7 +245,7 @@ impl GameState for MenuState {
     fn key_down_event(
         &mut self,
         _ctx: &mut Context,
-        keycode: KeyInput,
+        _keycode: KeyInput,
         _repeat: bool,
     ) -> GameResult<Transition> {
         Ok(Transition::None)
