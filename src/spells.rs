@@ -100,7 +100,7 @@ impl Spell {
             ),
 
             SpellType::Tornado => (
-                vec!['Q', 'Q', 'W'],
+                vec!['Q', 'W', 'W'],
                 graphics::Image::from_path(ctx, "/tornado.png").unwrap(),
             ),
             _ => unreachable!(),
