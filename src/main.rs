@@ -2,7 +2,7 @@ mod game_state;
 mod settings;
 mod spells;
 
-use game_state::MainState;
+use game_state::{MainState, MenuState};
 use settings::Settings;
 
 use ggez::{event, GameResult};
@@ -24,18 +24,15 @@ fn main() -> GameResult {
         .resizable(true)
         .dimensions(settings.window_width, settings.window_height);
 
-    let cb = ggez::ContextBuilder::new("Invoke", "pophilpo")
+    let cb = ggez::ContextBuilder::new("Invoke", "Invoke")
         .window_mode(window_mode)
         .add_resource_path(resource_dir);
     let (mut ctx, event_loop) = cb.build()?;
     settings.calculate_score_position(&mut ctx);
 
-    let window_mode = ggez::conf::WindowMode::default()
-        .resizable(true)
-        .dimensions(settings.window_width, settings.window_height);
-
     ctx.gfx.set_mode(window_mode)?;
 
-    let state = MainState::new(settings)?;
-    event::run(ctx, event_loop, state)
+    //let state = MainState::new(settings)?;
+    let menu_state = MenuState::new(&mut ctx, &settings)?;
+    event::run(ctx, event_loop, menu_state)
 }
