@@ -1,9 +1,12 @@
-mod game_state;
+mod game_states;
 mod settings;
 mod spells;
+mod state_machine;
 
-use game_state::{MenuState, StateMachine};
+use crate::game_states::menu_state::MenuState;
+
 use settings::Settings;
+use state_machine::StateMachine;
 
 use ggez::{event, GameResult};
 
