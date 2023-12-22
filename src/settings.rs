@@ -2,7 +2,7 @@ use ggez::glam::Vec2;
 use ggez::{glam::*, graphics, Context};
 
 // TODO: Implement key modifiers
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Settings {
     pub window_width: f32,
     pub window_height: f32,

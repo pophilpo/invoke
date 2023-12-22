@@ -2,7 +2,7 @@ mod game_state;
 mod settings;
 mod spells;
 
-use game_state::{MainState, MenuState};
+use game_state::{MainState, MenuState, StateMachine};
 use settings::Settings;
 
 use ggez::{event, GameResult};
@@ -29,10 +29,11 @@ fn main() -> GameResult {
         .add_resource_path(resource_dir);
     let (mut ctx, event_loop) = cb.build()?;
     settings.calculate_score_position(&mut ctx);
+    println!("{:?}", settings);
 
-    ctx.gfx.set_mode(window_mode)?;
+    let initial_state = MenuState::new(&mut ctx, &settings)?;
 
-    //let state = MainState::new(settings)?;
-    let menu_state = MenuState::new(&mut ctx, &settings)?;
-    event::run(ctx, event_loop, menu_state)
+    let state_machine = StateMachine::new(Box::new(initial_state), settings);
+
+    event::run(ctx, event_loop, state_machine)
 }
