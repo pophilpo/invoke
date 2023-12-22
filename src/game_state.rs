@@ -13,6 +13,7 @@ pub enum Transition {
     None,
     Menu,
     Game,
+    GameOver,
 }
 
 pub trait GameState {
@@ -85,14 +86,13 @@ impl GameState for MainState {
         }
 
         if self.game_over {
-            println!("Game is over.");
-            return Ok(Transition::Menu);
+            return Ok(Transition::GameOver);
         } else {
             for object in self.objects.iter_mut() {
                 object.position.y += object.speed;
                 if object.position.y > self.settings.window_height {
                     self.game_over = true;
-                    return Ok(Transition::Menu);
+                    return Ok(Transition::GameOver);
                 }
             }
         }
@@ -165,13 +165,13 @@ impl GameState for MainState {
                     } else {
                         self.game_over = true;
 
-                        return Ok(Transition::Menu);
+                        return Ok(Transition::GameOver);
                     }
                 }
                 _ => Ok(Transition::None),
             }
         } else {
-            Ok(Transition::Menu)
+            Ok(Transition::GameOver)
         }
     }
 }
@@ -282,6 +282,9 @@ impl EventHandler for StateMachine {
             Transition::Game => {
                 Ok(self.switch_state(Box::new(MainState::new(self.settings.clone())?)))
             }
+            Transition::GameOver => {
+                Ok(self.switch_state(Box::new(GameOverState::new(ctx, 0, &self.settings.clone()))))
+            }
         }
     }
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
@@ -305,6 +308,9 @@ impl EventHandler for StateMachine {
             Transition::Game => {
                 self.switch_state(Box::new(MainState::new(self.settings.clone())?));
             }
+            Transition::GameOver => {
+                self.switch_state(Box::new(GameOverState::new(ctx, 0, &self.settings.clone())));
+            }
         };
 
         Ok(())
@@ -325,8 +331,81 @@ impl EventHandler for StateMachine {
             Transition::Game => {
                 self.switch_state(Box::new(MainState::new(self.settings.clone())?));
             }
+            Transition::GameOver => {
+                self.switch_state(Box::new(GameOverState::new(ctx, 0, &self.settings.clone())));
+            }
         };
 
         Ok(())
+    }
+}
+
+struct GameOverState {
+    score: u32,
+    score_position: Vec2,
+    game_over_position: Vec2,
+}
+
+impl GameOverState {
+    fn new(ctx: &mut Context, score: u32, settings: &Settings) -> Self {
+        let game_over_x = (settings.window_width / 2.0) - 50.0;
+        let game_over_y = (settings.window_height / 2.0) - 20.0;
+        let game_over_position = Vec2::new(game_over_x, game_over_y);
+
+        let score_x = game_over_x;
+        let score_y = game_over_y - 30.0;
+        let score_position = Vec2::new(score_x, score_y);
+
+        Self {
+            score,
+            score_position,
+            game_over_position,
+        }
+    }
+}
+
+impl GameState for GameOverState {
+    fn update(&mut self, _ctx: &mut Context) -> GameResult<Transition> {
+        Ok(Transition::None)
+    }
+
+    fn draw(&mut self, ctx: &mut Context) -> GameResult {
+        let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
+
+        let game_over_text = String::from("Game Over!");
+
+        let game_over_text = graphics::Text::new(&game_over_text).set_scale(40.0).clone();
+        canvas.draw(&game_over_text, self.game_over_position);
+
+        let score_text = format!("Score {}", self.score);
+
+        let score_text = graphics::Text::new(&score_text).set_scale(40.0).clone();
+
+        canvas.draw(&score_text, self.score_position);
+
+        canvas.finish(ctx)?;
+        Ok(())
+    }
+
+    fn mouse_button_up_event(
+        &mut self,
+        _ctx: &mut Context,
+        _button: ggez::event::MouseButton,
+        _x: f32,
+        _y: f32,
+    ) -> GameResult<Transition> {
+        Ok(Transition::None)
+    }
+    fn key_down_event(
+        &mut self,
+        ctx: &mut Context,
+        keycode: KeyInput,
+        repeat: bool,
+    ) -> GameResult<Transition> {
+        match keycode.keycode.unwrap() {
+            KeyCode::Return => return Ok(Transition::Game),
+            KeyCode::Escape => return Ok(Transition::Menu),
+            _ => return Ok(Transition::None),
+        }
     }
 }
