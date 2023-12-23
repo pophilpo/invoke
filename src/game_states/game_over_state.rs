@@ -21,7 +21,7 @@ impl GameOverState {
         let game_over_position = Vec2::new(game_over_x, game_over_y);
 
         let score_x = game_over_x;
-        let score_y = game_over_y - 30.0;
+        let score_y = game_over_y + 35.0;
         let score_position = Vec2::new(score_x, score_y);
 
         Self {
