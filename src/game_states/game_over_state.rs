@@ -9,13 +9,13 @@ use ggez::{
 };
 
 pub struct GameOverState {
-    pub score: u32,
+    pub score: usize,
     pub score_position: Vec2,
     pub game_over_position: Vec2,
 }
 
 impl GameOverState {
-    pub fn new(_ctx: &mut Context, score: u32, settings: &Settings) -> Self {
+    pub fn new(_ctx: &mut Context, score: usize, settings: &Settings) -> Self {
         let game_over_x = (settings.window_width / 2.0) - 50.0;
         let game_over_y = (settings.window_height / 2.0) - 20.0;
         let game_over_position = Vec2::new(game_over_x, game_over_y);

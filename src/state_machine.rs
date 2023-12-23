@@ -9,7 +9,7 @@ pub enum Transition {
     None,
     Menu,
     Game,
-    GameOver,
+    GameOver { score: usize },
 }
 
 pub trait GameState {
@@ -60,9 +60,11 @@ impl EventHandler for StateMachine {
             Transition::Game => {
                 Ok(self.switch_state(Box::new(MainState::new(self.settings.clone())?)))
             }
-            Transition::GameOver => {
-                Ok(self.switch_state(Box::new(GameOverState::new(ctx, 0, &self.settings.clone()))))
-            }
+            Transition::GameOver { score } => Ok(self.switch_state(Box::new(GameOverState::new(
+                ctx,
+                score,
+                &self.settings.clone(),
+            )))),
         }
     }
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
@@ -86,8 +88,12 @@ impl EventHandler for StateMachine {
             Transition::Game => {
                 self.switch_state(Box::new(MainState::new(self.settings.clone())?));
             }
-            Transition::GameOver => {
-                self.switch_state(Box::new(GameOverState::new(ctx, 0, &self.settings.clone())));
+            Transition::GameOver { score } => {
+                self.switch_state(Box::new(GameOverState::new(
+                    ctx,
+                    score,
+                    &self.settings.clone(),
+                )));
             }
         };
 
@@ -109,8 +115,12 @@ impl EventHandler for StateMachine {
             Transition::Game => {
                 self.switch_state(Box::new(MainState::new(self.settings.clone())?));
             }
-            Transition::GameOver => {
-                self.switch_state(Box::new(GameOverState::new(ctx, 0, &self.settings.clone())));
+            Transition::GameOver { score } => {
+                self.switch_state(Box::new(GameOverState::new(
+                    ctx,
+                    score,
+                    &self.settings.clone(),
+                )));
             }
         };
 

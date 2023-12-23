@@ -61,13 +61,13 @@ impl GameState for MainState {
         }
 
         if self.game_over {
-            return Ok(Transition::GameOver);
+            return Ok(Transition::GameOver { score: self.score });
         } else {
             for object in self.objects.iter_mut() {
                 object.position.y += object.speed;
                 if object.position.y > self.settings.window_height {
                     self.game_over = true;
-                    return Ok(Transition::GameOver);
+                    return Ok(Transition::GameOver { score: self.score });
                 }
             }
         }
@@ -140,13 +140,13 @@ impl GameState for MainState {
                     } else {
                         self.game_over = true;
 
-                        return Ok(Transition::GameOver);
+                        return Ok(Transition::GameOver { score: self.score });
                     }
                 }
                 _ => Ok(Transition::None),
             }
         } else {
-            Ok(Transition::GameOver)
+            Ok(Transition::GameOver { score: self.score })
         }
     }
 }
