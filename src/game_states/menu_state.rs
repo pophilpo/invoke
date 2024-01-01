@@ -41,7 +41,7 @@ impl GameState for MenuState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
-        let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
+        let mut canvas = graphics::Canvas::from_frame(ctx, Color::MAGENTA);
 
         let text = String::from("Start Game");
 
