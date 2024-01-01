@@ -14,6 +14,7 @@ pub struct MenuState {
     start_game_dimensions: Rect,
     background_image: graphics::Image,
     font_size: f32,
+    settings: Settings,
 }
 
 impl MenuState {
@@ -43,6 +44,7 @@ impl MenuState {
             start_game_dimensions,
             font_size: settings.font_size,
             background_image,
+            settings: settings.clone(),
         })
     }
 }
@@ -54,7 +56,11 @@ impl GameState for MenuState {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
         let mut canvas = graphics::Canvas::from_frame(ctx, None);
-        canvas.draw(&self.background_image, graphics::DrawParam::default());
+        canvas.draw(
+            &self.background_image,
+            graphics::DrawParam::new()
+                .scale(Vec2::new(self.settings.scale_w, self.settings.scale_h)),
+        );
 
         let text = String::from("Start Game");
 

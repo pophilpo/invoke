@@ -14,6 +14,7 @@ pub struct GameOverState {
     game_over_draw_param: graphics::DrawParam,
     font_size: f32,
     background_image: graphics::Image,
+    settings: Settings,
 }
 
 impl GameOverState {
@@ -54,6 +55,7 @@ impl GameOverState {
             game_over_draw_param,
             font_size,
             background_image,
+            settings: settings.clone(),
         }
     }
 }
@@ -65,7 +67,11 @@ impl GameState for GameOverState {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
         let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
-        canvas.draw(&self.background_image, graphics::DrawParam::default());
+        canvas.draw(
+            &self.background_image,
+            graphics::DrawParam::new()
+                .scale(Vec2::new(self.settings.scale_w, self.settings.scale_h)),
+        );
 
         let game_over_text = String::from("Game Over!");
 

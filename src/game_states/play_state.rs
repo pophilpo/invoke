@@ -126,7 +126,11 @@ impl GameState for MainState {
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
         let mut canvas = graphics::Canvas::from_frame(ctx, None);
 
-        canvas.draw(&self.background_image, graphics::DrawParam::default());
+        canvas.draw(
+            &self.background_image,
+            graphics::DrawParam::new()
+                .scale(Vec2::new(self.settings.scale_w, self.settings.scale_h)),
+        );
         for spell in &self.objects {
             canvas.draw(&spell.object, Vec2::new(spell.position.x, spell.position.y));
         }
