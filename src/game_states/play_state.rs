@@ -13,21 +13,28 @@ pub struct MainState {
     pub game_over: bool,
     pub objects: Vec<Spell>,
     pub input_buffer: Vec<char>,
+    pub input_buffer_position: Vec2,
     pub score: usize,
+    pub score_position: Vec2,
     pub speed: f32,
     pub last_spell_time: std::time::Duration,
     pub settings: Settings,
 }
 
 impl MainState {
-    pub fn new(settings: Settings) -> GameResult<Self> {
+    pub fn new(settings: Settings, ctx: &mut Context) -> GameResult<Self> {
+        let input_buffer_position = Self::calculate_buffer_position(&settings, ctx);
+        let score_position = Self::calculate_score_position(&settings, ctx);
+
         Ok(Self {
             game_over: false,
             objects: Vec::new(),
             input_buffer: Vec::with_capacity(3),
+            input_buffer_position,
             last_spell_time: std::time::Duration::new(0, 0),
             speed: 0.0,
             score: 0,
+            score_position,
             settings,
         })
     }
@@ -37,6 +44,38 @@ impl MainState {
             self.input_buffer.remove(0);
         }
         self.input_buffer.push(input);
+    }
+
+    fn get_buffer_text(&self) -> graphics::Text {
+        let input: String = self.input_buffer.iter().collect();
+        graphics::Text::new(input)
+            .set_scale(self.settings.font_size)
+            .clone()
+    }
+
+    fn calculate_buffer_position(settings: &Settings, ctx: &mut Context) -> Vec2 {
+        let buffer_text = graphics::TextFragment::new("WWW").scale(settings.font_size);
+        let buffer_text = graphics::Text::new(buffer_text);
+        let buffer_text_boundary = buffer_text.measure(ctx).unwrap();
+
+        let buffer_position = Vec2::new(
+            (settings.window_width / 2.0) - (buffer_text_boundary.x / 2.0),
+            settings.window_height - buffer_text_boundary.y * 2.0,
+        );
+
+        buffer_position
+    }
+
+    fn calculate_score_position(settings: &Settings, ctx: &mut Context) -> Vec2 {
+        let score_text = graphics::TextFragment::new("Score 9999").scale(settings.font_size);
+        let score_text = graphics::Text::new(score_text);
+        let score_text_boundary = score_text.measure(ctx).unwrap();
+
+        let score_position = Vec2::new(
+            settings.window_width - score_text_boundary.x,
+            settings.window_height - score_text_boundary.y * 2.0,
+        );
+        score_position
     }
 }
 
@@ -81,16 +120,14 @@ impl GameState for MainState {
         for spell in &self.objects {
             canvas.draw(&spell.object, Vec2::new(spell.position.x, spell.position.y));
         }
-        let input: String = self.input_buffer.iter().collect();
-        let text = graphics::Text::new(input).set_scale(48.).clone();
 
+        let buffer_text = self.get_buffer_text();
         let score_text = graphics::Text::new(format!("Score {}", self.score))
-            .set_scale(self.settings.score_font_size)
+            .set_scale(self.settings.font_size)
             .clone();
 
-        canvas.draw(&text, Vec2::new(960.0, 1000.0));
-
-        canvas.draw(&score_text, self.settings.score_position.unwrap());
+        canvas.draw(&buffer_text, self.input_buffer_position);
+        canvas.draw(&score_text, self.score_position);
 
         canvas.finish(ctx)?;
         Ok(())
