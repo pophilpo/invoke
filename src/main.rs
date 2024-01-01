@@ -31,8 +31,6 @@ fn main() -> GameResult {
         .window_mode(window_mode)
         .add_resource_path(resource_dir);
     let (mut ctx, event_loop) = cb.build()?;
-    settings.calculate_score_position(&mut ctx);
-    println!("{:?}", settings);
 
     let initial_state = MenuState::new(&mut ctx, &settings)?;
 
