@@ -4,7 +4,7 @@ use crate::state_machine::{GameState, Transition};
 
 use ggez::{
     glam::*,
-    graphics,
+    graphics::{self, Color},
     input::keyboard::{KeyCode, KeyInput},
     Context, GameResult,
 };
@@ -19,12 +19,16 @@ pub struct MainState {
     pub speed: f32,
     pub last_spell_time: std::time::Duration,
     pub settings: Settings,
+    background_image: graphics::Image,
 }
 
 impl MainState {
     pub fn new(settings: Settings, ctx: &mut Context) -> GameResult<Self> {
         let input_buffer_position = Self::calculate_buffer_position(&settings, ctx);
         let score_position = Self::calculate_score_position(&settings, ctx);
+
+        let background_image =
+            graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
 
         Ok(Self {
             game_over: false,
@@ -36,6 +40,7 @@ impl MainState {
             score: 0,
             score_position,
             settings,
+            background_image,
         })
     }
 
@@ -114,9 +119,9 @@ impl GameState for MainState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
-        let mut canvas =
-            graphics::Canvas::from_frame(ctx, graphics::Color::from([0.1, 0.2, 0.3, 1.0]));
+        let mut canvas = graphics::Canvas::from_frame(ctx, None);
 
+        canvas.draw(&self.background_image, graphics::DrawParam::default());
         for spell in &self.objects {
             canvas.draw(&spell.object, Vec2::new(spell.position.x, spell.position.y));
         }
@@ -126,8 +131,16 @@ impl GameState for MainState {
             .set_scale(self.settings.font_size)
             .clone();
 
-        canvas.draw(&buffer_text, self.input_buffer_position);
-        canvas.draw(&score_text, self.score_position);
+        let buffer_draw_params = graphics::DrawParam::new()
+            .color(Color::BLACK)
+            .dest(self.input_buffer_position);
+
+        let score_position_draw_parms = graphics::DrawParam::new()
+            .color(Color::BLACK)
+            .dest(self.score_position);
+
+        canvas.draw(&buffer_text, buffer_draw_params);
+        canvas.draw(&score_text, score_position_draw_parms);
 
         canvas.finish(ctx)?;
         Ok(())

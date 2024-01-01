@@ -11,6 +11,7 @@ use ggez::{
 pub struct MenuState {
     pub start_game_position: Vec2,
     pub start_game_dimensions: Rect,
+    background_image: graphics::Image,
     font_size: f32,
 }
 
@@ -27,10 +28,14 @@ impl MenuState {
         let x = (settings.window_width / 2.0) - start_game_dimensions.w / 2.0;
         let y = (settings.window_height / 2.0) - start_game_dimensions.h / 2.0;
 
+        let background_image =
+            graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
+
         Ok(Self {
             start_game_position: Vec2::new(x, y),
             start_game_dimensions,
             font_size: settings.font_size,
+            background_image,
         })
     }
 }
@@ -41,14 +46,20 @@ impl GameState for MenuState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
-        let mut canvas = graphics::Canvas::from_frame(ctx, Color::MAGENTA);
+        let mut canvas = graphics::Canvas::from_frame(ctx, None);
+        canvas.draw(&self.background_image, graphics::DrawParam::default());
 
         let text = String::from("Start Game");
 
         // That drove me mad untill I found this:
         // https://github.com/ggez/ggez/issues/659
         let play_button = graphics::Text::new(&text).set_scale(self.font_size).clone();
-        canvas.draw(&play_button, self.start_game_position);
+
+        let play_button_draw_params = graphics::DrawParam::new()
+            .color(Color::BLACK)
+            .dest(self.start_game_position);
+
+        canvas.draw(&play_button, play_button_draw_params);
 
         canvas.finish(ctx)?;
         Ok(())
