@@ -58,7 +58,7 @@ impl EventHandler for StateMachine {
                 Ok(self.switch_state(Box::new(MenuState::new(ctx, &self.settings.clone())?)))
             }
             Transition::Game => {
-                Ok(self.switch_state(Box::new(MainState::new(self.settings.clone())?)))
+                Ok(self.switch_state(Box::new(MainState::new(self.settings.clone(), ctx)?)))
             }
             Transition::GameOver { score } => Ok(self.switch_state(Box::new(GameOverState::new(
                 ctx,
@@ -86,7 +86,7 @@ impl EventHandler for StateMachine {
                 self.switch_state(Box::new(MenuState::new(ctx, &self.settings.clone())?));
             }
             Transition::Game => {
-                self.switch_state(Box::new(MainState::new(self.settings.clone())?));
+                self.switch_state(Box::new(MainState::new(self.settings.clone(), ctx)?));
             }
             Transition::GameOver { score } => {
                 self.switch_state(Box::new(GameOverState::new(
@@ -113,7 +113,7 @@ impl EventHandler for StateMachine {
                 self.switch_state(Box::new(MenuState::new(ctx, &self.settings.clone())?));
             }
             Transition::Game => {
-                self.switch_state(Box::new(MainState::new(self.settings.clone())?));
+                self.switch_state(Box::new(MainState::new(self.settings.clone(), ctx)?));
             }
             Transition::GameOver { score } => {
                 self.switch_state(Box::new(GameOverState::new(

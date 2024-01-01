@@ -31,7 +31,7 @@ impl GameOverState {
         let score_text_boundary = score_text.measure(ctx).unwrap();
         let score_position = Vec2::new(
             game_over_position.x,
-            game_over_position.y + game_over_text_boundary.y,
+            game_over_position.y + score_text_boundary.y,
         );
 
         let font_size = settings.font_size;
