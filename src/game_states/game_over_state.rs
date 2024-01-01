@@ -13,6 +13,7 @@ pub struct GameOverState {
     pub score_position: Vec2,
     pub game_over_position: Vec2,
     font_size: f32,
+    background_image: graphics::Image,
 }
 
 impl GameOverState {
@@ -36,11 +37,15 @@ impl GameOverState {
 
         let font_size = settings.font_size;
 
+        let background_image =
+            graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
+
         Self {
             score,
             score_position,
             game_over_position,
             font_size,
+            background_image,
         }
     }
 }
@@ -52,6 +57,7 @@ impl GameState for GameOverState {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
         let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
+        canvas.draw(&self.background_image, graphics::DrawParam::default());
 
         let game_over_text = String::from("Game Over!");
 
