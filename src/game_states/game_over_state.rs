@@ -67,11 +67,7 @@ impl GameState for GameOverState {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
         let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
-        canvas.draw(
-            &self.background_image,
-            graphics::DrawParam::new()
-                .scale(Vec2::new(self.settings.scale_w, self.settings.scale_h)),
-        );
+        canvas.draw(&self.background_image, self.settings.background_draw_param);
 
         let game_over_text = String::from("Game Over!");
 

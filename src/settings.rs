@@ -1,15 +1,13 @@
-use ggez::glam::Vec2;
+use ggez::{glam::Vec2, graphics};
 
 // TODO: Implement key modifiers
 #[derive(Debug, Clone)]
 pub struct Settings {
     pub window_width: f32,
     pub window_height: f32,
-    pub score_position: Option<Vec2>,
     pub font_size: f32,
     pub background_image_path: String,
-    pub scale_w: f32,
-    pub scale_h: f32,
+    pub background_draw_param: graphics::DrawParam,
 }
 
 impl Settings {
@@ -24,14 +22,15 @@ impl Settings {
         let scale_w = window_width / 1024.0;
         let scale_h = window_height / 1024.0;
 
+        let scale = Vec2::new(scale_w, scale_h);
+        let background_draw_param = graphics::DrawParam::new().scale(scale);
+
         Settings {
             window_width,
             window_height,
-            score_position: None,
             font_size,
             background_image_path,
-            scale_w,
-            scale_h,
+            background_draw_param,
         }
     }
 }

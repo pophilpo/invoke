@@ -56,11 +56,7 @@ impl GameState for MenuState {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
         let mut canvas = graphics::Canvas::from_frame(ctx, None);
-        canvas.draw(
-            &self.background_image,
-            graphics::DrawParam::new()
-                .scale(Vec2::new(self.settings.scale_w, self.settings.scale_h)),
-        );
+        canvas.draw(&self.background_image, self.settings.background_draw_param);
 
         let text = String::from("Start Game");
 
