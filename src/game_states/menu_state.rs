@@ -77,8 +77,6 @@ impl GameState for MenuState {
     ) -> GameResult<Transition> {
         if button == ggez::event::MouseButton::Left {
             let cursor_location = Vec2::new(x, y);
-            println!("{:?}", cursor_location);
-
             let start_game_rect = Rect::new(
                 self.start_game_position.x,
                 self.start_game_position.y,

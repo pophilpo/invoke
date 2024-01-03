@@ -27,7 +27,7 @@ fn main() -> GameResult {
         .resizable(true)
         .dimensions(settings.window_width, settings.window_height);
 
-    let cb = ggez::ContextBuilder::new("Invoke", "Invoke")
+    let cb = ggez::ContextBuilder::new("Invoke", "Popov Philipp")
         .window_mode(window_mode)
         .add_resource_path(resource_dir);
     let (mut ctx, event_loop) = cb.build()?;
