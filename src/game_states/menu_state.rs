@@ -19,10 +19,8 @@ pub struct MenuState {
 
 impl MenuState {
     pub fn new(ctx: &mut Context, settings: &Settings) -> GameResult<Self> {
-        let text = String::from("Start Game");
-
         // Use ctx to get the text dimensions
-        let play_button = graphics::Text::new(&text)
+        let play_button = graphics::Text::new("Start Game")
             .set_scale(settings.font_size)
             .clone();
         let start_game_dimensions = play_button.dimensions(ctx).unwrap();
@@ -58,11 +56,11 @@ impl GameState for MenuState {
         let mut canvas = graphics::Canvas::from_frame(ctx, None);
         canvas.draw(&self.background_image, self.settings.background_draw_param);
 
-        let text = String::from("Start Game");
-
         // That drove me mad untill I found this:
         // https://github.com/ggez/ggez/issues/659
-        let play_button = graphics::Text::new(&text).set_scale(self.font_size).clone();
+        let play_button = graphics::Text::new("Start Game")
+            .set_scale(self.font_size)
+            .clone();
 
         canvas.draw(&play_button, self.draw_param);
 

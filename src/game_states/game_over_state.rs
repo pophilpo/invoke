@@ -69,15 +69,12 @@ impl GameState for GameOverState {
         let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
         canvas.draw(&self.background_image, self.settings.background_draw_param);
 
-        let game_over_text = String::from("Game Over!");
-
-        let game_over_text = graphics::Text::new(&game_over_text)
+        let game_over_text = graphics::Text::new("Game Over!")
             .set_scale(self.font_size)
             .clone();
         canvas.draw(&game_over_text, self.game_over_draw_param);
 
         let score_text = format!("Score {}", self.score);
-
         let score_text = graphics::Text::new(&score_text)
             .set_scale(self.font_size)
             .clone();
