@@ -4,38 +4,43 @@ use crate::state_machine::{GameState, Transition};
 
 use ggez::{
     glam::*,
-    graphics,
+    graphics::{self, Color},
     input::keyboard::{KeyCode, KeyInput},
     Context, GameResult,
 };
 
 pub struct MainState {
-    pub game_over: bool,
-    pub objects: Vec<Spell>,
-    pub input_buffer: Vec<char>,
-    pub input_buffer_position: Vec2,
-    pub score: usize,
-    pub score_position: Vec2,
-    pub speed: f32,
-    pub last_spell_time: std::time::Duration,
-    pub settings: Settings,
+    game_over: bool,
+    objects: Vec<Spell>,
+    input_buffer: Vec<char>,
+    input_buffer_draw_param: graphics::DrawParam,
+    score: usize,
+    score_draw_param: graphics::DrawParam,
+    speed: f32,
+    last_spell_time: std::time::Duration,
+    settings: Settings,
+    background_image: graphics::Image,
 }
 
 impl MainState {
     pub fn new(settings: Settings, ctx: &mut Context) -> GameResult<Self> {
-        let input_buffer_position = Self::calculate_buffer_position(&settings, ctx);
-        let score_position = Self::calculate_score_position(&settings, ctx);
+        let input_buffer_draw_param = Self::calculate_buffer_position(&settings, ctx);
+        let score_draw_param = Self::calculate_score_position(&settings, ctx);
+
+        let background_image =
+            graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
 
         Ok(Self {
             game_over: false,
             objects: Vec::new(),
             input_buffer: Vec::with_capacity(3),
-            input_buffer_position,
+            input_buffer_draw_param,
             last_spell_time: std::time::Duration::new(0, 0),
             speed: 0.0,
             score: 0,
-            score_position,
+            score_draw_param,
             settings,
+            background_image,
         })
     }
 
@@ -53,7 +58,7 @@ impl MainState {
             .clone()
     }
 
-    fn calculate_buffer_position(settings: &Settings, ctx: &mut Context) -> Vec2 {
+    fn calculate_buffer_position(settings: &Settings, ctx: &mut Context) -> graphics::DrawParam {
         let buffer_text = graphics::TextFragment::new("WWW").scale(settings.font_size);
         let buffer_text = graphics::Text::new(buffer_text);
         let buffer_text_boundary = buffer_text.measure(ctx).unwrap();
@@ -63,10 +68,12 @@ impl MainState {
             settings.window_height - buffer_text_boundary.y * 2.0,
         );
 
-        buffer_position
+        graphics::DrawParam::new()
+            .color(Color::BLACK)
+            .dest(buffer_position)
     }
 
-    fn calculate_score_position(settings: &Settings, ctx: &mut Context) -> Vec2 {
+    fn calculate_score_position(settings: &Settings, ctx: &mut Context) -> graphics::DrawParam {
         let score_text = graphics::TextFragment::new("Score 9999").scale(settings.font_size);
         let score_text = graphics::Text::new(score_text);
         let score_text_boundary = score_text.measure(ctx).unwrap();
@@ -75,7 +82,10 @@ impl MainState {
             settings.window_width - score_text_boundary.x,
             settings.window_height - score_text_boundary.y * 2.0,
         );
-        score_position
+
+        graphics::DrawParam::new()
+            .color(Color::BLACK)
+            .dest(score_position)
     }
 }
 
@@ -114,9 +124,9 @@ impl GameState for MainState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
-        let mut canvas =
-            graphics::Canvas::from_frame(ctx, graphics::Color::from([0.1, 0.2, 0.3, 1.0]));
+        let mut canvas = graphics::Canvas::from_frame(ctx, None);
 
+        canvas.draw(&self.background_image, self.settings.background_draw_param);
         for spell in &self.objects {
             canvas.draw(&spell.object, Vec2::new(spell.position.x, spell.position.y));
         }
@@ -126,8 +136,8 @@ impl GameState for MainState {
             .set_scale(self.settings.font_size)
             .clone();
 
-        canvas.draw(&buffer_text, self.input_buffer_position);
-        canvas.draw(&score_text, self.score_position);
+        canvas.draw(&buffer_text, self.input_buffer_draw_param);
+        canvas.draw(&score_text, self.score_draw_param);
 
         canvas.finish(ctx)?;
         Ok(())

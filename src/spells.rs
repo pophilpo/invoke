@@ -103,7 +103,6 @@ impl Spell {
                 vec!['Q', 'W', 'W'],
                 graphics::Image::from_path(ctx, "/tornado.png").unwrap(),
             ),
-            _ => unreachable!(),
         };
 
         Self {

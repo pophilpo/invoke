@@ -9,10 +9,12 @@ use ggez::{
 };
 
 pub struct GameOverState {
-    pub score: usize,
-    pub score_position: Vec2,
-    pub game_over_position: Vec2,
+    score: usize,
+    score_draw_param: graphics::DrawParam,
+    game_over_draw_param: graphics::DrawParam,
     font_size: f32,
+    background_image: graphics::Image,
+    settings: Settings,
 }
 
 impl GameOverState {
@@ -26,6 +28,10 @@ impl GameOverState {
             (settings.window_height / 2.0) - game_over_text_boundary.y,
         );
 
+        let game_over_draw_param = graphics::DrawParam::new()
+            .color(Color::BLACK)
+            .dest(game_over_position);
+
         let score_text = graphics::TextFragment::new("Score: 999").scale(settings.font_size);
         let score_text = graphics::Text::new(score_text);
         let score_text_boundary = score_text.measure(ctx).unwrap();
@@ -34,13 +40,22 @@ impl GameOverState {
             game_over_position.y + score_text_boundary.y,
         );
 
+        let score_draw_param = graphics::DrawParam::new()
+            .color(Color::BLACK)
+            .dest(score_position);
+
         let font_size = settings.font_size;
+
+        let background_image =
+            graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
 
         Self {
             score,
-            score_position,
-            game_over_position,
+            score_draw_param,
+            game_over_draw_param,
             font_size,
+            background_image,
+            settings: settings.clone(),
         }
     }
 }
@@ -52,21 +67,19 @@ impl GameState for GameOverState {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
         let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
+        canvas.draw(&self.background_image, self.settings.background_draw_param);
 
-        let game_over_text = String::from("Game Over!");
-
-        let game_over_text = graphics::Text::new(&game_over_text)
+        let game_over_text = graphics::Text::new("Game Over!")
             .set_scale(self.font_size)
             .clone();
-        canvas.draw(&game_over_text, self.game_over_position);
+        canvas.draw(&game_over_text, self.game_over_draw_param);
 
         let score_text = format!("Score {}", self.score);
-
         let score_text = graphics::Text::new(&score_text)
             .set_scale(self.font_size)
             .clone();
 
-        canvas.draw(&score_text, self.score_position);
+        canvas.draw(&score_text, self.score_draw_param);
 
         canvas.finish(ctx)?;
         Ok(())
