@@ -3,25 +3,15 @@ use crate::state_machine::{GameState, Transition};
 
 use ggez::{
     glam::*,
-    graphics::{self, Color, Drawable, Rect},
-    input::keyboard::KeyInput,
+    graphics::{self, Color, Rect},
     Context, GameResult,
 };
 
-pub struct MenuState {
-    draw_param: graphics::DrawParam,
-    start_game_position: Vec2,
-    start_game_dimensions: Rect,
-    background_image: graphics::Image,
-    font_size: f32,
-    settings: Settings,
-}
-
-struct Button {
-    background: graphics::Mesh,
-    text: graphics::Text,
-    hint: graphics::Text,
-    position: Vec2,
+pub struct Button {
+    pub background: graphics::Mesh,
+    pub text: graphics::Text,
+    pub hint: graphics::Text,
+    pub position: Vec2,
 }
 
 impl Button {
