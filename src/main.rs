@@ -1,5 +1,5 @@
+mod buttons;
 mod game_states;
-mod button;
 mod settings;
 mod spells;
 mod state_machine;
