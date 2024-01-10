@@ -12,7 +12,6 @@ pub const BACKGROUND_IMAGE: &[u8] = include_bytes!("../resources/background_towe
 pub struct Settings {
     pub window_width: f32,
     pub window_height: f32,
-    pub background_image_path: String,
     pub background_draw_param: graphics::DrawParam,
     pub font_size: f32,
 }
@@ -36,7 +35,6 @@ impl From<UserSettings> for Settings {
         Self {
             window_width: user_settings.window_width,
             window_height: user_settings.window_height,
-            background_image_path: user_settings.background_image_path,
             background_draw_param,
             font_size,
         }
@@ -47,7 +45,6 @@ impl From<UserSettings> for Settings {
 struct UserSettings {
     window_width: f32,
     window_height: f32,
-    background_image_path: String,
 }
 
 impl Default for UserSettings {
@@ -55,7 +52,6 @@ impl Default for UserSettings {
         Self {
             window_width: 1024.0,
             window_height: 1024.0,
-            background_image_path: String::from("/background_tower_1.png"),
         }
     }
 }
