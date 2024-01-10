@@ -4,7 +4,7 @@ use crate::state_machine::{GameState, Transition};
 
 use ggez::{
     glam::*,
-    graphics::{self, Color, Drawable, Rect},
+    graphics::{self, Rect},
     input::keyboard::KeyInput,
     Context, GameResult,
 };
@@ -49,7 +49,6 @@ impl GameState for MenuState {
 
         // That drove me mad untill I found this:
         // https://github.com/ggez/ggez/issues/659
-        //
         for button in &self.buttons {
             canvas.draw(&button.background, button.draw_param);
             canvas.draw(&button.text, button.text_draw_param);

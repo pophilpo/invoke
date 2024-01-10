@@ -1,5 +1,4 @@
-use crate::settings::{self, Settings};
-use crate::state_machine::{GameState, Transition};
+use crate::settings::Settings;
 
 use ggez::graphics::{DrawParam, Drawable};
 use ggez::{
