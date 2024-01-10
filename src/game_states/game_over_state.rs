@@ -4,7 +4,7 @@ use crate::state_machine::{GameState, Transition};
 
 use ggez::{
     glam::*,
-    graphics::{self, Color},
+    graphics::{self, Color, Rect},
     input::keyboard::{KeyCode, KeyInput},
     Context, GameResult,
 };
@@ -92,10 +92,34 @@ impl GameState for GameOverState {
     fn mouse_button_up_event(
         &mut self,
         _ctx: &mut Context,
-        _button: ggez::event::MouseButton,
-        _x: f32,
-        _y: f32,
+        button: ggez::event::MouseButton,
+        x: f32,
+        y: f32,
     ) -> GameResult<Transition> {
+        if button == ggez::event::MouseButton::Left {
+            let cursor_location = Vec2::new(x, y);
+            let go_to_menu_rect = Rect::new(
+                self.buttons[1].position.x,
+                self.buttons[1].position.y,
+                self.buttons[1].dimensions.w,
+                self.buttons[1].dimensions.h,
+            );
+
+            let try_again_rect = Rect::new(
+                self.buttons[2].position.x,
+                self.buttons[2].position.y,
+                self.buttons[2].dimensions.w,
+                self.buttons[2].dimensions.h,
+            );
+
+            if go_to_menu_rect.contains(cursor_location) {
+                return Ok(Transition::Menu);
+            }
+            if try_again_rect.contains(cursor_location) {
+                return Ok(Transition::Game);
+            }
+        }
+
         Ok(Transition::None)
     }
     fn key_down_event(
