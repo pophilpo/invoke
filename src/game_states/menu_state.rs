@@ -12,12 +12,20 @@ use ggez::{
 pub struct MenuState {
     background_image: graphics::Image,
     settings: Settings,
-    play_button: MenuButton,
+    buttons: Vec<MenuButton>,
 }
 
 impl MenuState {
     pub fn new(ctx: &mut Context, settings: &Settings) -> GameResult<Self> {
-        let play_button = MenuButton::new(ctx, "Start Game", "ENTER", settings)?;
+        let mut buttons = Vec::new();
+        let play_button_y = settings.window_height / 3.0;
+        let play_button = MenuButton::new(ctx, "Start Game", "ENTER", settings, play_button_y)?;
+
+        let settings_button_y = settings.window_height / 2.5;
+        let settings_button = MenuButton::new(ctx, "Settings", "S", settings, settings_button_y)?;
+
+        buttons.push(play_button);
+        buttons.push(settings_button);
 
         let background_image =
             graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
@@ -25,7 +33,7 @@ impl MenuState {
         Ok(Self {
             background_image,
             settings: settings.clone(),
-            play_button,
+            buttons,
         })
     }
 }
@@ -41,8 +49,11 @@ impl GameState for MenuState {
 
         // That drove me mad untill I found this:
         // https://github.com/ggez/ggez/issues/659
-        canvas.draw(&self.play_button.background, self.play_button.draw_param);
-
+        //
+        for button in &self.buttons {
+            canvas.draw(&button.background, button.draw_param);
+            canvas.draw(&button.text, button.text_draw_param);
+        }
         canvas.finish(ctx)?;
         Ok(())
     }
@@ -57,10 +68,10 @@ impl GameState for MenuState {
         if button == ggez::event::MouseButton::Left {
             let cursor_location = Vec2::new(x, y);
             let start_game_rect = Rect::new(
-                self.play_button.position.x,
-                self.play_button.position.y,
-                self.play_button.dimensions.w,
-                self.play_button.dimensions.h,
+                self.buttons[0].position.x,
+                self.buttons[0].position.y,
+                self.buttons[0].dimensions.w,
+                self.buttons[0].dimensions.h,
             );
 
             if start_game_rect.contains(cursor_location) {
