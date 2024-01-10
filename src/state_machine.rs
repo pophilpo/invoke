@@ -10,6 +10,7 @@ pub enum Transition {
     Menu,
     Game,
     GameOver { score: usize },
+    Quit,
 }
 
 pub trait GameState {
@@ -64,7 +65,9 @@ impl EventHandler for StateMachine {
                 ctx,
                 score,
                 &self.settings.clone(),
-            )))),
+            )?))),
+
+            Transition::Quit => Ok(ctx.request_quit()),
         }
     }
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
@@ -93,8 +96,10 @@ impl EventHandler for StateMachine {
                     ctx,
                     score,
                     &self.settings.clone(),
-                )));
+                )?));
             }
+
+            Transition::Quit => ctx.request_quit(),
         };
 
         Ok(())
@@ -120,8 +125,10 @@ impl EventHandler for StateMachine {
                     ctx,
                     score,
                     &self.settings.clone(),
-                )));
+                )?));
             }
+
+            Transition::Quit => ctx.request_quit(),
         };
 
         Ok(())

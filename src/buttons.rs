@@ -24,13 +24,14 @@ impl MenuButton {
         button_text: &str,
         button_hint: &str,
         settings: &Settings,
+        button_x: f32,
         button_y: f32,
     ) -> GameResult<Self> {
         let button_width = settings.window_width / 4.0;
         let button_height = settings.window_height / 20.0;
 
         // Button is always centered by W
-        let button_x = (settings.window_width / 2.0) - button_width / 2.0;
+        let button_x = button_x - button_width / 2.0;
 
         let position = Vec2::new(button_x, button_y);
 

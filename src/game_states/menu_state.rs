@@ -5,7 +5,7 @@ use crate::state_machine::{GameState, Transition};
 use ggez::{
     glam::*,
     graphics::{self, Rect},
-    input::keyboard::KeyInput,
+    input::keyboard::{KeyCode, KeyInput},
     Context, GameResult,
 };
 
@@ -18,14 +18,23 @@ pub struct MenuState {
 impl MenuState {
     pub fn new(ctx: &mut Context, settings: &Settings) -> GameResult<Self> {
         let mut buttons = Vec::new();
+
+        let button_x = settings.window_width / 2.0;
         let play_button_y = settings.window_height / 3.0;
-        let play_button = MenuButton::new(ctx, "Start Game", "RET", settings, play_button_y)?;
+        let play_button =
+            MenuButton::new(ctx, "Start Game", "RET", settings, button_x, play_button_y)?;
 
         let settings_button_y = settings.window_height / 2.5;
-        let settings_button = MenuButton::new(ctx, "Settings", "S", settings, settings_button_y)?;
+        let settings_button =
+            MenuButton::new(ctx, "Settings", "S", settings, button_x, settings_button_y)?;
+
+        // 7/15
+        let quit_button_y = settings.window_height / 2.14;
+        let quit_button = MenuButton::new(ctx, "Quit", "ESC", settings, button_x, quit_button_y)?;
 
         buttons.push(play_button);
         buttons.push(settings_button);
+        buttons.push(quit_button);
 
         let background_image =
             graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
@@ -74,8 +83,18 @@ impl GameState for MenuState {
                 self.buttons[0].dimensions.h,
             );
 
+            let quit_game_rect = Rect::new(
+                self.buttons[2].position.x,
+                self.buttons[2].position.y,
+                self.buttons[2].dimensions.w,
+                self.buttons[2].dimensions.h,
+            );
+
             if start_game_rect.contains(cursor_location) {
                 return Ok(Transition::Game);
+            }
+            if quit_game_rect.contains(cursor_location) {
+                return Ok(Transition::Quit);
             }
         }
         Ok(Transition::None)
@@ -83,9 +102,13 @@ impl GameState for MenuState {
     fn key_down_event(
         &mut self,
         _ctx: &mut Context,
-        _keycode: KeyInput,
+        keycode: KeyInput,
         _repeat: bool,
     ) -> GameResult<Transition> {
-        Ok(Transition::None)
+        match keycode.keycode.unwrap() {
+            KeyCode::Return => return Ok(Transition::Game),
+            KeyCode::Escape => return Ok(Transition::Quit),
+            _ => return Ok(Transition::None),
+        }
     }
 }
