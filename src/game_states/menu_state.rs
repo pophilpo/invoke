@@ -28,8 +28,13 @@ impl MenuState {
         let settings_button =
             MenuButton::new(ctx, "Settings", "S", settings, button_x, settings_button_y)?;
 
+        // 7/15
+        let quit_button_y = settings.window_height / 2.14;
+        let quit_button = MenuButton::new(ctx, "Quit", "ESC", settings, button_x, quit_button_y)?;
+
         buttons.push(play_button);
         buttons.push(settings_button);
+        buttons.push(quit_button);
 
         let background_image =
             graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
@@ -78,8 +83,18 @@ impl GameState for MenuState {
                 self.buttons[0].dimensions.h,
             );
 
+            let quit_game_rect = Rect::new(
+                self.buttons[2].position.x,
+                self.buttons[2].position.y,
+                self.buttons[2].dimensions.w,
+                self.buttons[2].dimensions.h,
+            );
+
             if start_game_rect.contains(cursor_location) {
                 return Ok(Transition::Game);
+            }
+            if quit_game_rect.contains(cursor_location) {
+                return Ok(Transition::Quit);
             }
         }
         Ok(Transition::None)
@@ -92,6 +107,7 @@ impl GameState for MenuState {
     ) -> GameResult<Transition> {
         match keycode.keycode.unwrap() {
             KeyCode::Return => return Ok(Transition::Game),
+            KeyCode::Escape => return Ok(Transition::Quit),
             _ => return Ok(Transition::None),
         }
     }
