@@ -6,6 +6,8 @@ use directories::ProjectDirs;
 use ggez::{glam::Vec2, graphics};
 use serde::{Deserialize, Serialize};
 
+pub const BACKGROUND_IMAGE: &[u8] = include_bytes!("../resources/background_tower_1.png");
+
 #[derive(Debug, Clone)]
 pub struct Settings {
     pub window_width: f32,

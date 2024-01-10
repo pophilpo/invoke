@@ -1,5 +1,5 @@
 use crate::buttons::MenuButton;
-use crate::settings::Settings;
+use crate::settings::{Settings, BACKGROUND_IMAGE};
 use crate::state_machine::{GameState, Transition};
 
 use ggez::{
@@ -36,8 +36,7 @@ impl MenuState {
         buttons.push(settings_button);
         buttons.push(quit_button);
 
-        let background_image =
-            graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
+        let background_image = graphics::Image::from_bytes(ctx, BACKGROUND_IMAGE)?;
 
         Ok(Self {
             background_image,

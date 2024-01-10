@@ -1,5 +1,5 @@
 use crate::buttons::MenuButton;
-use crate::settings::Settings;
+use crate::settings::{Settings, BACKGROUND_IMAGE};
 use crate::state_machine::{GameState, Transition};
 
 use ggez::{
@@ -59,8 +59,7 @@ impl GameOverState {
         buttons.push(go_to_menu_button);
         buttons.push(try_again_button);
 
-        let background_image =
-            graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
+        let background_image = graphics::Image::from_bytes(ctx, BACKGROUND_IMAGE)?;
 
         Ok(Self {
             background_image,

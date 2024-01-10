@@ -1,4 +1,4 @@
-use crate::settings::Settings;
+use crate::settings::{Settings, BACKGROUND_IMAGE};
 use crate::spells::Spell;
 use crate::state_machine::{GameState, Transition};
 
@@ -27,8 +27,7 @@ impl MainState {
         let input_buffer_draw_param = Self::calculate_buffer_position(&settings, ctx);
         let score_draw_param = Self::calculate_score_position(&settings, ctx);
 
-        let background_image =
-            graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
+        let background_image = graphics::Image::from_bytes(ctx, BACKGROUND_IMAGE)?;
 
         Ok(Self {
             game_over: false,
