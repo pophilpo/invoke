@@ -5,7 +5,7 @@ use crate::state_machine::{GameState, Transition};
 use ggez::{
     glam::*,
     graphics::{self, Rect},
-    input::keyboard::KeyInput,
+    input::keyboard::{KeyCode, KeyInput},
     Context, GameResult,
 };
 
@@ -83,9 +83,12 @@ impl GameState for MenuState {
     fn key_down_event(
         &mut self,
         _ctx: &mut Context,
-        _keycode: KeyInput,
+        keycode: KeyInput,
         _repeat: bool,
     ) -> GameResult<Transition> {
-        Ok(Transition::None)
+        match keycode.keycode.unwrap() {
+            KeyCode::Return => return Ok(Transition::Game),
+            _ => return Ok(Transition::None),
+        }
     }
 }
