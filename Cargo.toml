@@ -1,5 +1,5 @@
 [package]
-name = "Invoke"
+name = "invoke"
 version = "0.1.0"
 edition = "2021"
 
@@ -12,3 +12,4 @@ num-traits = "0.2.17"
 rand = "0.8.5"
 serde = { version = "1.0", features = ["derive"] }
 toml = "0.5"
+directories = "3.0"

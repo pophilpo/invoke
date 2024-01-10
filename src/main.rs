@@ -22,7 +22,7 @@ fn main() -> GameResult {
         path::PathBuf::from("./resources")
     };
 
-    let settings = Settings::new();
+    let settings = Settings::new().unwrap();
 
     let window_mode = ggez::conf::WindowMode::default()
         .resizable(true)
