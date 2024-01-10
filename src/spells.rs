@@ -2,16 +2,16 @@ use crate::settings::Settings;
 use ggez::{glam::*, graphics, Context};
 use rand::{seq::SliceRandom, Rng};
 
-pub const ALACRITY_IMAGE: &[u8] = include_bytes!("../resources/alacrity.png");
-pub const CHAOS_METEOR_IMAGE: &[u8] = include_bytes!("../resources/chaos_meteor.png");
-pub const COLD_SNAP_IMAGE: &[u8] = include_bytes!("../resources/cold_snap.png");
-pub const DEAFENING_BLAST_IMAGE: &[u8] = include_bytes!("../resources/deafening_blast.png");
-pub const EMP_IMAGE: &[u8] = include_bytes!("../resources/emp.png");
-pub const FORGE_SPIRIT_IMAGE: &[u8] = include_bytes!("../resources/forge_spirit.png");
-pub const GHOST_WALK_IMAGE: &[u8] = include_bytes!("../resources/ghost_walk.png");
-pub const ICE_WALL_IMAGE: &[u8] = include_bytes!("../resources/ice_wall.png");
-pub const SUN_STRIKE_IMAGE: &[u8] = include_bytes!("../resources/sun_strike.png");
-pub const TORNADO_IMAGE: &[u8] = include_bytes!("../resources/tornado.png");
+const ALACRITY_IMAGE: &[u8] = include_bytes!("../resources/alacrity.png");
+const CHAOS_METEOR_IMAGE: &[u8] = include_bytes!("../resources/chaos_meteor.png");
+const COLD_SNAP_IMAGE: &[u8] = include_bytes!("../resources/cold_snap.png");
+const DEAFENING_BLAST_IMAGE: &[u8] = include_bytes!("../resources/deafening_blast.png");
+const EMP_IMAGE: &[u8] = include_bytes!("../resources/emp.png");
+const FORGE_SPIRIT_IMAGE: &[u8] = include_bytes!("../resources/forge_spirit.png");
+const GHOST_WALK_IMAGE: &[u8] = include_bytes!("../resources/ghost_walk.png");
+const ICE_WALL_IMAGE: &[u8] = include_bytes!("../resources/ice_wall.png");
+const SUN_STRIKE_IMAGE: &[u8] = include_bytes!("../resources/sun_strike.png");
+const TORNADO_IMAGE: &[u8] = include_bytes!("../resources/tornado.png");
 
 pub struct Position {
     pub x: f32,
