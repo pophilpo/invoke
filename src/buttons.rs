@@ -12,6 +12,7 @@ pub struct MenuButton {
     pub text: graphics::Text,
     pub text_draw_param: DrawParam,
     pub hint: graphics::Text,
+    pub hint_draw_param: DrawParam,
     pub position: Vec2,
     pub dimensions: Rect,
     pub draw_param: DrawParam,
@@ -60,6 +61,14 @@ impl MenuButton {
         let hint = graphics::Text::new(button_hint)
             .set_scale(settings.font_size * 0.5)
             .clone();
+        let hint_dimensions = hint
+            .dimensions(ctx)
+            .expect("Text Drawable always has dimensions");
+
+        let hint_position_x = (position.x + dimensions.w) - (hint_dimensions.w * 1.2);
+        let hint_position_y = (position.y + dimensions.h) - hint_dimensions.h;
+        let hint_position = Vec2::new(hint_position_x, hint_position_y);
+        let hint_draw_param = DrawParam::new().dest(hint_position).color(Color::BLACK);
 
         let draw_param = graphics::DrawParam::new()
             .dest(position)
@@ -69,6 +78,7 @@ impl MenuButton {
             text,
             text_draw_param,
             hint,
+            hint_draw_param,
             position,
             dimensions,
             draw_param,

@@ -19,7 +19,7 @@ impl MenuState {
     pub fn new(ctx: &mut Context, settings: &Settings) -> GameResult<Self> {
         let mut buttons = Vec::new();
         let play_button_y = settings.window_height / 3.0;
-        let play_button = MenuButton::new(ctx, "Start Game", "ENTER", settings, play_button_y)?;
+        let play_button = MenuButton::new(ctx, "Start Game", "RET", settings, play_button_y)?;
 
         let settings_button_y = settings.window_height / 2.5;
         let settings_button = MenuButton::new(ctx, "Settings", "S", settings, settings_button_y)?;
@@ -52,6 +52,7 @@ impl GameState for MenuState {
         for button in &self.buttons {
             canvas.draw(&button.background, button.draw_param);
             canvas.draw(&button.text, button.text_draw_param);
+            canvas.draw(&button.hint, button.hint_draw_param);
         }
         canvas.finish(ctx)?;
         Ok(())
