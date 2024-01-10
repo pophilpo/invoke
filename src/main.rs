@@ -1,3 +1,4 @@
+mod buttons;
 mod game_states;
 mod settings;
 mod spells;

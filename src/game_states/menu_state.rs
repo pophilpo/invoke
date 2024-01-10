@@ -1,48 +1,39 @@
+use crate::buttons::MenuButton;
 use crate::settings::Settings;
 use crate::state_machine::{GameState, Transition};
 
 use ggez::{
     glam::*,
-    graphics::{self, Color, Drawable, Rect},
+    graphics::{self, Rect},
     input::keyboard::KeyInput,
     Context, GameResult,
 };
 
 pub struct MenuState {
-    draw_param: graphics::DrawParam,
-    start_game_position: Vec2,
-    start_game_dimensions: Rect,
     background_image: graphics::Image,
-    font_size: f32,
     settings: Settings,
+    buttons: Vec<MenuButton>,
 }
 
 impl MenuState {
     pub fn new(ctx: &mut Context, settings: &Settings) -> GameResult<Self> {
-        // Use ctx to get the text dimensions
-        let play_button = graphics::Text::new("Start Game")
-            .set_scale(settings.font_size)
-            .clone();
-        let start_game_dimensions = play_button.dimensions(ctx).unwrap();
+        let mut buttons = Vec::new();
+        let play_button_y = settings.window_height / 3.0;
+        let play_button = MenuButton::new(ctx, "Start Game", "ENTER", settings, play_button_y)?;
 
-        let x = (settings.window_width / 2.0) - start_game_dimensions.w / 2.0;
-        let y = (settings.window_height / 2.0) - start_game_dimensions.h / 2.0;
-        let start_game_position = Vec2::new(x, y);
+        let settings_button_y = settings.window_height / 2.5;
+        let settings_button = MenuButton::new(ctx, "Settings", "S", settings, settings_button_y)?;
 
-        let draw_param = graphics::DrawParam::new()
-            .dest(start_game_position)
-            .color(Color::BLACK);
+        buttons.push(play_button);
+        buttons.push(settings_button);
 
         let background_image =
             graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
 
         Ok(Self {
-            draw_param,
-            start_game_position,
-            start_game_dimensions,
-            font_size: settings.font_size,
             background_image,
             settings: settings.clone(),
+            buttons,
         })
     }
 }
@@ -58,12 +49,10 @@ impl GameState for MenuState {
 
         // That drove me mad untill I found this:
         // https://github.com/ggez/ggez/issues/659
-        let play_button = graphics::Text::new("Start Game")
-            .set_scale(self.font_size)
-            .clone();
-
-        canvas.draw(&play_button, self.draw_param);
-
+        for button in &self.buttons {
+            canvas.draw(&button.background, button.draw_param);
+            canvas.draw(&button.text, button.text_draw_param);
+        }
         canvas.finish(ctx)?;
         Ok(())
     }
@@ -78,10 +67,10 @@ impl GameState for MenuState {
         if button == ggez::event::MouseButton::Left {
             let cursor_location = Vec2::new(x, y);
             let start_game_rect = Rect::new(
-                self.start_game_position.x,
-                self.start_game_position.y,
-                self.start_game_dimensions.w,
-                self.start_game_dimensions.h,
+                self.buttons[0].position.x,
+                self.buttons[0].position.y,
+                self.buttons[0].dimensions.w,
+                self.buttons[0].dimensions.h,
             );
 
             if start_game_rect.contains(cursor_location) {
