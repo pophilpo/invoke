@@ -18,11 +18,15 @@ pub struct MenuState {
 impl MenuState {
     pub fn new(ctx: &mut Context, settings: &Settings) -> GameResult<Self> {
         let mut buttons = Vec::new();
+
+        let button_x = settings.window_width / 2.0;
         let play_button_y = settings.window_height / 3.0;
-        let play_button = MenuButton::new(ctx, "Start Game", "RET", settings, play_button_y)?;
+        let play_button =
+            MenuButton::new(ctx, "Start Game", "RET", settings, button_x, play_button_y)?;
 
         let settings_button_y = settings.window_height / 2.5;
-        let settings_button = MenuButton::new(ctx, "Settings", "S", settings, settings_button_y)?;
+        let settings_button =
+            MenuButton::new(ctx, "Settings", "S", settings, button_x, settings_button_y)?;
 
         buttons.push(play_button);
         buttons.push(settings_button);

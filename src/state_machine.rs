@@ -64,7 +64,7 @@ impl EventHandler for StateMachine {
                 ctx,
                 score,
                 &self.settings.clone(),
-            )))),
+            )?))),
         }
     }
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
@@ -93,7 +93,7 @@ impl EventHandler for StateMachine {
                     ctx,
                     score,
                     &self.settings.clone(),
-                )));
+                )?));
             }
         };
 
@@ -120,7 +120,7 @@ impl EventHandler for StateMachine {
                     ctx,
                     score,
                     &self.settings.clone(),
-                )));
+                )?));
             }
         };
 
