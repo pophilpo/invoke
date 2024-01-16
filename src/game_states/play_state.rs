@@ -1,4 +1,5 @@
-use crate::settings::{Settings, BACKGROUND_IMAGE};
+use crate::assets::BACKGROUND_IMAGE;
+use crate::settings::Settings;
 use crate::spells::Spell;
 use crate::state_machine::{GameState, Transition};
 

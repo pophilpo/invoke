@@ -1,4 +1,5 @@
 mod buttons;
+mod assets;
 mod game_states;
 mod settings;
 mod spells;

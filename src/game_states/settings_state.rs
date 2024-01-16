@@ -1,5 +1,6 @@
+use crate::assets::{BACKGROUND_IMAGE, EXORT, QUAS, WEX};
 use crate::buttons::MenuButton;
-use crate::settings::{Settings, BACKGROUND_IMAGE, EXORT, QUAS, WEX};
+use crate::settings::Settings;
 use crate::state_machine::{GameState, Transition};
 
 use ggez::{
