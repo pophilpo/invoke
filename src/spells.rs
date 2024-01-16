@@ -71,7 +71,6 @@ impl Spell {
         let (cast, object) = match &spell_type {
             SpellType::Alacrity(image) => (vec!['E', 'W', 'W'], image),
             SpellType::ChaosMeteor(image) => (vec!['E', 'E', 'W'], image),
-
             SpellType::ColdSnap(image) => (vec!['Q', 'Q', 'Q'], image),
             SpellType::DeafeningBlast(image) => (vec!['E', 'Q', 'W'], image),
             SpellType::Emp(image) => (vec!['W', 'W', 'W'], image),
