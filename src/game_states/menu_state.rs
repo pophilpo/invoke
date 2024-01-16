@@ -107,6 +107,7 @@ impl GameState for MenuState {
         match keycode.keycode.unwrap() {
             KeyCode::Return => return Ok(Transition::Game),
             KeyCode::Escape => return Ok(Transition::Quit),
+            KeyCode::S => return Ok(Transition::Settings),
             _ => return Ok(Transition::None),
         }
     }
