@@ -1,4 +1,5 @@
 use crate::assets::BACKGROUND_IMAGE;
+use crate::input_buffer::InputBuffer;
 use crate::orbs::{Orb, OrbType};
 use crate::settings::Settings;
 use crate::spells::Spell;
@@ -16,7 +17,7 @@ use ggez::{
 pub struct MainState {
     game_over: bool,
     objects: Vec<Spell>,
-    input_buffer: Vec<char>,
+    input_buffer: InputBuffer,
     input_buffer_draw_param: graphics::DrawParam,
     score: usize,
     score_draw_param: graphics::DrawParam,
@@ -45,10 +46,12 @@ impl MainState {
         keybindings.insert(settings.exort_key, exort);
         keybindings.insert(settings.invoke_key, invoke);
 
+        let input_buffer = InputBuffer::new();
+
         Ok(Self {
             game_over: false,
             objects: Vec::new(),
-            input_buffer: Vec::with_capacity(3),
+            input_buffer,
             input_buffer_draw_param,
             last_spell_time: std::time::Duration::new(0, 0),
             speed: 0.0,
@@ -60,15 +63,8 @@ impl MainState {
         })
     }
 
-    pub fn update_buffer(&mut self, input: char) {
-        if self.input_buffer.len() == 3 {
-            self.input_buffer.remove(0);
-        }
-        self.input_buffer.push(input);
-    }
-
     fn get_buffer_text(&self) -> graphics::Text {
-        let input: String = self.input_buffer.iter().collect();
+        let input: String = self.input_buffer.buffer.iter().collect();
         graphics::Text::new(input)
             .set_scale(self.settings.font_size)
             .clone()
@@ -170,26 +166,15 @@ impl GameState for MainState {
                 KeyCode::Escape => return Ok(Transition::Menu),
 
                 key => {
-                    if let Some(orb) = self.keybindings.get(&key).clone() {
-                        match orb.orb_type {
-                            OrbType::Quas => {
-                                self.update_buffer('Q');
-                                return Ok(Transition::None);
-                            }
-                            OrbType::Wex => {
-                                self.update_buffer('W');
-                                return Ok(Transition::None);
-                            }
-                            OrbType::Exort => {
-                                self.update_buffer('E');
-                                return Ok(Transition::None);
-                            }
-                            OrbType::Invoke => {
+                    if let Some(orb) = self.keybindings.get(&key) {
+                        let spell_cast = self.input_buffer.update_buffer(&orb);
+
+                        match spell_cast {
+                            None => return Ok(Transition::None),
+                            Some(cast) => {
                                 let mut index_to_remove = None;
                                 for (index, object) in self.objects.iter().enumerate() {
-                                    let mut sorted_buffer = self.input_buffer.clone();
-                                    sorted_buffer.sort_unstable();
-                                    if sorted_buffer == object.cast {
+                                    if cast == object.cast {
                                         self.score += 1;
                                         index_to_remove = Some(index);
                                         break;
@@ -207,7 +192,6 @@ impl GameState for MainState {
                             }
                         }
                     }
-
                     Ok(Transition::None)
                 }
             }
