@@ -1,6 +1,10 @@
+use crate::assets::BACKGROUND_IMAGE;
+use crate::orbs::{Orb, OrbType};
 use crate::settings::Settings;
 use crate::spells::Spell;
 use crate::state_machine::{GameState, Transition};
+
+use std::collections::HashMap;
 
 use ggez::{
     glam::*,
@@ -20,15 +24,26 @@ pub struct MainState {
     last_spell_time: std::time::Duration,
     settings: Settings,
     background_image: graphics::Image,
+    keybindings: HashMap<KeyCode, Orb>,
 }
 
 impl MainState {
     pub fn new(settings: Settings, ctx: &mut Context) -> GameResult<Self> {
         let input_buffer_draw_param = Self::calculate_buffer_position(&settings, ctx);
         let score_draw_param = Self::calculate_score_position(&settings, ctx);
+        let background_image = graphics::Image::from_bytes(ctx, BACKGROUND_IMAGE)?;
 
-        let background_image =
-            graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
+        let quas = Orb::new(ctx, OrbType::Quas)?;
+        let wex = Orb::new(ctx, OrbType::Wex)?;
+        let exort = Orb::new(ctx, OrbType::Exort)?;
+        let invoke = Orb::new(ctx, OrbType::Invoke)?;
+
+        let mut keybindings: HashMap<KeyCode, Orb> = HashMap::with_capacity(4);
+
+        keybindings.insert(settings.quas_key, quas);
+        keybindings.insert(settings.wex_key, wex);
+        keybindings.insert(settings.exort_key, exort);
+        keybindings.insert(settings.invoke_key, invoke);
 
         Ok(Self {
             game_over: false,
@@ -41,6 +56,7 @@ impl MainState {
             score_draw_param,
             settings,
             background_image,
+            keybindings,
         })
     }
 
@@ -153,44 +169,47 @@ impl GameState for MainState {
             match keycode.keycode.unwrap() {
                 KeyCode::Escape => return Ok(Transition::Menu),
 
-                KeyCode::Q => {
-                    self.update_buffer('Q');
-                    return Ok(Transition::None);
-                }
+                key => {
+                    if let Some(orb) = self.keybindings.get(&key).clone() {
+                        match orb.orb_type {
+                            OrbType::Quas => {
+                                self.update_buffer('Q');
+                                return Ok(Transition::None);
+                            }
+                            OrbType::Wex => {
+                                self.update_buffer('W');
+                                return Ok(Transition::None);
+                            }
+                            OrbType::Exort => {
+                                self.update_buffer('E');
+                                return Ok(Transition::None);
+                            }
+                            OrbType::Invoke => {
+                                let mut index_to_remove = None;
+                                for (index, object) in self.objects.iter().enumerate() {
+                                    let mut sorted_buffer = self.input_buffer.clone();
+                                    sorted_buffer.sort_unstable();
+                                    if sorted_buffer == object.cast {
+                                        self.score += 1;
+                                        index_to_remove = Some(index);
+                                        break;
+                                    }
+                                }
+                                if let Some(index) = index_to_remove {
+                                    self.objects.remove(index);
 
-                KeyCode::W => {
-                    self.update_buffer('W');
-                    return Ok(Transition::None);
-                }
+                                    return Ok(Transition::None);
+                                } else {
+                                    self.game_over = true;
 
-                KeyCode::E => {
-                    self.update_buffer('E');
-
-                    return Ok(Transition::None);
-                }
-
-                KeyCode::R => {
-                    let mut index_to_remove = None;
-                    for (index, object) in self.objects.iter().enumerate() {
-                        let mut sorted_buffer = self.input_buffer.clone();
-                        sorted_buffer.sort_unstable();
-                        if sorted_buffer == object.cast {
-                            self.score += 1;
-                            index_to_remove = Some(index);
-                            break;
+                                    return Ok(Transition::GameOver { score: self.score });
+                                }
+                            }
                         }
                     }
-                    if let Some(index) = index_to_remove {
-                        self.objects.remove(index);
 
-                        return Ok(Transition::None);
-                    } else {
-                        self.game_over = true;
-
-                        return Ok(Transition::GameOver { score: self.score });
-                    }
+                    Ok(Transition::None)
                 }
-                _ => Ok(Transition::None),
             }
         } else {
             Ok(Transition::GameOver { score: self.score })

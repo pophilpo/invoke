@@ -1,4 +1,5 @@
 use crate::buttons::MenuButton;
+use crate::assets::BACKGROUND_IMAGE;
 use crate::settings::Settings;
 use crate::state_machine::{GameState, Transition};
 
@@ -36,8 +37,7 @@ impl MenuState {
         buttons.push(settings_button);
         buttons.push(quit_button);
 
-        let background_image =
-            graphics::Image::from_path(ctx, &settings.background_image_path).unwrap();
+        let background_image = graphics::Image::from_bytes(ctx, BACKGROUND_IMAGE)?;
 
         Ok(Self {
             background_image,
@@ -108,6 +108,7 @@ impl GameState for MenuState {
         match keycode.keycode.unwrap() {
             KeyCode::Return => return Ok(Transition::Game),
             KeyCode::Escape => return Ok(Transition::Quit),
+            KeyCode::S => return Ok(Transition::Settings),
             _ => return Ok(Transition::None),
         }
     }

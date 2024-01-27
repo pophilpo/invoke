@@ -38,7 +38,7 @@ impl MenuButton {
         let dimensions = Rect::new(0.0, 0.0, button_width, button_height);
 
         let radius = 10.0;
-        let color = Color::from_rgb(180, 180, 190);
+        let color = Color::from_rgb(255, 255, 255);
         let background = graphics::Mesh::new_rounded_rectangle(
             ctx,
             graphics::DrawMode::fill(),

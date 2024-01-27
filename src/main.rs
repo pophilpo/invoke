@@ -1,5 +1,7 @@
+mod assets;
 mod buttons;
 mod game_states;
+mod orbs;
 mod settings;
 mod spells;
 mod state_machine;
@@ -22,7 +24,7 @@ fn main() -> GameResult {
         path::PathBuf::from("./resources")
     };
 
-    let settings = Settings::new();
+    let settings = Settings::new().unwrap();
 
     let window_mode = ggez::conf::WindowMode::default()
         .resizable(true)

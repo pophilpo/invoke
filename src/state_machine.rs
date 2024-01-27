@@ -1,5 +1,6 @@
 use crate::game_states::{
     game_over_state::GameOverState, menu_state::MenuState, play_state::MainState,
+    settings_state::SettingsState,
 };
 use crate::settings::Settings;
 
@@ -9,6 +10,7 @@ pub enum Transition {
     None,
     Menu,
     Game,
+    Settings,
     GameOver { score: usize },
     Quit,
 }
@@ -67,6 +69,10 @@ impl EventHandler for StateMachine {
                 &self.settings.clone(),
             )?))),
 
+            Transition::Settings => {
+                Ok(self.switch_state(Box::new(SettingsState::new(ctx, &self.settings.clone())?)))
+            }
+
             Transition::Quit => Ok(ctx.request_quit()),
         }
     }
@@ -98,6 +104,9 @@ impl EventHandler for StateMachine {
                     &self.settings.clone(),
                 )?));
             }
+            Transition::Settings => {
+                self.switch_state(Box::new(SettingsState::new(ctx, &self.settings.clone())?))
+            }
 
             Transition::Quit => ctx.request_quit(),
         };
@@ -126,6 +135,10 @@ impl EventHandler for StateMachine {
                     score,
                     &self.settings.clone(),
                 )?));
+            }
+
+            Transition::Settings => {
+                self.switch_state(Box::new(SettingsState::new(ctx, &self.settings.clone())?))
             }
 
             Transition::Quit => ctx.request_quit(),

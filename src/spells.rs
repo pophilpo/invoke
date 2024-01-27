@@ -1,6 +1,17 @@
 use crate::settings::Settings;
-use ggez::{glam::*, graphics, Context};
+use ggez::{glam::*, graphics::Image, Context};
 use rand::{seq::SliceRandom, Rng};
+
+const ALACRITY_IMAGE: &[u8] = include_bytes!("../resources/alacrity.png");
+const CHAOS_METEOR_IMAGE: &[u8] = include_bytes!("../resources/chaos_meteor.png");
+const COLD_SNAP_IMAGE: &[u8] = include_bytes!("../resources/cold_snap.png");
+const DEAFENING_BLAST_IMAGE: &[u8] = include_bytes!("../resources/deafening_blast.png");
+const EMP_IMAGE: &[u8] = include_bytes!("../resources/emp.png");
+const FORGE_SPIRIT_IMAGE: &[u8] = include_bytes!("../resources/forge_spirit.png");
+const GHOST_WALK_IMAGE: &[u8] = include_bytes!("../resources/ghost_walk.png");
+const ICE_WALL_IMAGE: &[u8] = include_bytes!("../resources/ice_wall.png");
+const SUN_STRIKE_IMAGE: &[u8] = include_bytes!("../resources/sun_strike.png");
+const TORNADO_IMAGE: &[u8] = include_bytes!("../resources/tornado.png");
 
 pub struct Position {
     pub x: f32,
@@ -16,24 +27,23 @@ impl Position {
         Self { x, y }
     }
 }
-#[derive(Copy, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub enum SpellType {
-    Alacrity,
-    ChaosMeteor,
-    ColdSnap,
-    DeafeningBlast,
-    Emp,
-    ForgeSpririt,
-    GhostWalk,
-    IceWall,
-    SunStrike,
-    Tornado,
+    Alacrity(Image),
+    ChaosMeteor(Image),
+    ColdSnap(Image),
+    DeafeningBlast(Image),
+    Emp(Image),
+    ForgeSpririt(Image),
+    GhostWalk(Image),
+    IceWall(Image),
+    SunStrike(Image),
+    Tornado(Image),
 }
 
 pub struct Spell {
-    pub spell_type: SpellType,
     pub cast: Vec<char>,
-    pub object: graphics::Image,
+    pub object: Image,
     pub position: Position,
     pub speed: f32,
 }
@@ -43,72 +53,37 @@ impl Spell {
         let position = Position::new(settings);
 
         let spells = [
-            SpellType::Alacrity,
-            SpellType::ChaosMeteor,
-            SpellType::ColdSnap,
-            SpellType::DeafeningBlast,
-            SpellType::Emp,
-            SpellType::ForgeSpririt,
-            SpellType::GhostWalk,
-            SpellType::IceWall,
-            SpellType::SunStrike,
-            SpellType::Tornado,
+            SpellType::Alacrity(Image::from_bytes(ctx, ALACRITY_IMAGE).unwrap()),
+            SpellType::ChaosMeteor(Image::from_bytes(ctx, CHAOS_METEOR_IMAGE).unwrap()),
+            SpellType::ColdSnap(Image::from_bytes(ctx, COLD_SNAP_IMAGE).unwrap()),
+            SpellType::DeafeningBlast(Image::from_bytes(ctx, DEAFENING_BLAST_IMAGE).unwrap()),
+            SpellType::Emp(Image::from_bytes(ctx, EMP_IMAGE).unwrap()),
+            SpellType::ForgeSpririt(Image::from_bytes(ctx, FORGE_SPIRIT_IMAGE).unwrap()),
+            SpellType::GhostWalk(Image::from_bytes(ctx, GHOST_WALK_IMAGE).unwrap()),
+            SpellType::IceWall(Image::from_bytes(ctx, ICE_WALL_IMAGE).unwrap()),
+            SpellType::SunStrike(Image::from_bytes(ctx, SUN_STRIKE_IMAGE).unwrap()),
+            SpellType::Tornado(Image::from_bytes(ctx, TORNADO_IMAGE).unwrap()),
         ];
 
         let mut rng = rand::thread_rng();
-        let spell_type = *spells.choose(&mut rng).unwrap();
+        let spell_type = spells.choose(&mut rng).unwrap();
 
         let (cast, object) = match &spell_type {
-            SpellType::Alacrity => (
-                vec!['E', 'W', 'W'],
-                graphics::Image::from_path(ctx, "/alacrity.png").unwrap(),
-            ),
-            SpellType::ChaosMeteor => (
-                vec!['E', 'E', 'W'],
-                graphics::Image::from_path(ctx, "/chaos_meteor.png").unwrap(),
-            ),
-
-            SpellType::ColdSnap => (
-                vec!['Q', 'Q', 'Q'],
-                graphics::Image::from_path(ctx, "/cold_snap.png").unwrap(),
-            ),
-            SpellType::DeafeningBlast => (
-                vec!['E', 'Q', 'W'],
-                graphics::Image::from_path(ctx, "/deafening_blast.png").unwrap(),
-            ),
-            SpellType::Emp => (
-                vec!['W', 'W', 'W'],
-                graphics::Image::from_path(ctx, "/emp.png").unwrap(),
-            ),
-            SpellType::ForgeSpririt => (
-                vec!['E', 'E', 'Q'],
-                graphics::Image::from_path(ctx, "/forge_spirit.png").unwrap(),
-            ),
-            SpellType::GhostWalk => (
-                vec!['Q', 'Q', 'W'],
-                graphics::Image::from_path(ctx, "/ghost_walk.png").unwrap(),
-            ),
-
-            SpellType::IceWall => (
-                vec!['E', 'Q', 'Q'],
-                graphics::Image::from_path(ctx, "/ice_wall.png").unwrap(),
-            ),
-
-            SpellType::SunStrike => (
-                vec!['E', 'E', 'E'],
-                graphics::Image::from_path(ctx, "/sun_strike.png").unwrap(),
-            ),
-
-            SpellType::Tornado => (
-                vec!['Q', 'W', 'W'],
-                graphics::Image::from_path(ctx, "/tornado.png").unwrap(),
-            ),
+            SpellType::Alacrity(image) => (vec!['E', 'W', 'W'], image),
+            SpellType::ChaosMeteor(image) => (vec!['E', 'E', 'W'], image),
+            SpellType::ColdSnap(image) => (vec!['Q', 'Q', 'Q'], image),
+            SpellType::DeafeningBlast(image) => (vec!['E', 'Q', 'W'], image),
+            SpellType::Emp(image) => (vec!['W', 'W', 'W'], image),
+            SpellType::ForgeSpririt(image) => (vec!['E', 'E', 'Q'], image),
+            SpellType::GhostWalk(image) => (vec!['Q', 'Q', 'W'], image),
+            SpellType::IceWall(image) => (vec!['E', 'Q', 'Q'], image),
+            SpellType::SunStrike(image) => (vec!['E', 'E', 'E'], image),
+            SpellType::Tornado(image) => (vec!['Q', 'W', 'W'], image),
         };
 
         Self {
-            spell_type,
             cast,
-            object,
+            object: object.clone(),
             position,
             speed,
         }
