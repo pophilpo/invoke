@@ -1,7 +1,7 @@
 use crate::assets::{EXORT, INVOKE, QUAS, WEX};
 use ggez::{graphics, Context, GameResult};
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub enum OrbType {
     Quas,
     Wex,

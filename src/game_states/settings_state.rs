@@ -1,12 +1,11 @@
 use crate::assets::{BACKGROUND_IMAGE, EXORT, QUAS, WEX};
-use crate::buttons::MenuButton;
 use crate::settings::Settings;
 use crate::state_machine::{GameState, Transition};
 
 use ggez::{
     glam::*,
-    graphics::{self, Rect},
-    input::keyboard::{KeyCode, KeyInput},
+    graphics::{self},
+    input::keyboard::KeyInput,
     Context, GameResult,
 };
 
@@ -19,7 +18,6 @@ pub struct SettingsState {
     wex_draw_param: graphics::DrawParam,
     exort: graphics::Image,
     exort_draw_param: graphics::DrawParam,
-    buttons: Vec<MenuButton>,
 }
 
 impl SettingsState {
@@ -30,9 +28,7 @@ impl SettingsState {
         let exort = graphics::Image::from_bytes(ctx, EXORT)?;
 
         let (quas_draw_param, wex_draw_param, exort_draw_param) =
-            Self::calculate_orb_positions(settings, ctx);
-
-        let mut buttons = Vec::new();
+            Self::calculate_orb_positions(settings);
 
         Ok(Self {
             settings: settings.clone(),
@@ -43,13 +39,11 @@ impl SettingsState {
             wex_draw_param,
             exort,
             exort_draw_param,
-            buttons,
         })
     }
 
     fn calculate_orb_positions(
         settings: &Settings,
-        ctx: &mut Context,
     ) -> (
         graphics::DrawParam,
         graphics::DrawParam,
@@ -105,7 +99,7 @@ impl GameState for SettingsState {
     fn key_down_event(
         &mut self,
         _ctx: &mut Context,
-        keycode: KeyInput,
+        _keycode: KeyInput,
         _repeat: bool,
     ) -> GameResult<Transition> {
         Ok(Transition::None)
