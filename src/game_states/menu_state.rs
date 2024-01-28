@@ -1,5 +1,5 @@
-use crate::buttons::MenuButton;
 use crate::assets::BACKGROUND_IMAGE;
+use crate::buttons::MenuButton;
 use crate::settings::Settings;
 use crate::state_machine::{GameState, Transition};
 
