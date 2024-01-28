@@ -26,6 +26,7 @@ pub struct MainState {
     settings: Settings,
     background_image: graphics::Image,
     keybindings: HashMap<KeyCode, Orb>,
+    orbs: HashMap<char, graphics::Image>,
 }
 
 impl MainState {
@@ -39,6 +40,15 @@ impl MainState {
         let exort = Orb::new(ctx, OrbType::Exort)?;
         let invoke = Orb::new(ctx, OrbType::Invoke)?;
 
+        let quas_image = quas.orb_image.clone();
+        let wex_image = wex.orb_image.clone();
+        let exort_image = exort.orb_image.clone();
+
+        let mut orbs = HashMap::with_capacity(3);
+        orbs.insert('Q', quas_image);
+        orbs.insert('W', wex_image);
+        orbs.insert('E', exort_image);
+
         let mut keybindings: HashMap<KeyCode, Orb> = HashMap::with_capacity(4);
 
         keybindings.insert(settings.quas_key, quas);
@@ -46,7 +56,7 @@ impl MainState {
         keybindings.insert(settings.exort_key, exort);
         keybindings.insert(settings.invoke_key, invoke);
 
-        let input_buffer = InputBuffer::new();
+        let input_buffer = InputBuffer::new(&settings);
 
         Ok(Self {
             game_over: false,
@@ -60,6 +70,7 @@ impl MainState {
             settings,
             background_image,
             keybindings,
+            orbs,
         })
     }
 
@@ -143,14 +154,13 @@ impl GameState for MainState {
             canvas.draw(&spell.object, Vec2::new(spell.position.x, spell.position.y));
         }
 
-        let buffer_text = self.get_buffer_text();
-        let score_text = graphics::Text::new(format!("Score {}", self.score))
-            .set_scale(self.settings.font_size)
-            .clone();
+        for (pos, key) in self.input_buffer.buffer.iter().enumerate() {
+            let orb_image = self.orbs.get(&key).unwrap();
 
-        canvas.draw(&buffer_text, self.input_buffer_draw_param);
-        canvas.draw(&score_text, self.score_draw_param);
+            let draw_param = self.input_buffer.draw_params[pos];
 
+            canvas.draw(orb_image, draw_param);
+        }
         canvas.finish(ctx)?;
         Ok(())
     }
