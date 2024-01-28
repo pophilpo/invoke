@@ -9,7 +9,7 @@ use std::collections::HashMap;
 
 use ggez::{
     glam::*,
-    graphics::{self, Color},
+    graphics::{self},
     input::keyboard::{KeyCode, KeyInput},
     Context, GameResult,
 };
@@ -18,9 +18,7 @@ pub struct MainState {
     game_over: bool,
     objects: Vec<Spell>,
     input_buffer: InputBuffer,
-    input_buffer_draw_param: graphics::DrawParam,
     score: usize,
-    score_draw_param: graphics::DrawParam,
     speed: f32,
     last_spell_time: std::time::Duration,
     settings: Settings,
@@ -31,8 +29,6 @@ pub struct MainState {
 
 impl MainState {
     pub fn new(settings: Settings, ctx: &mut Context) -> GameResult<Self> {
-        let input_buffer_draw_param = Self::calculate_buffer_position(&settings, ctx);
-        let score_draw_param = Self::calculate_score_position(&settings, ctx);
         let background_image = graphics::Image::from_bytes(ctx, BACKGROUND_IMAGE)?;
 
         let quas = Orb::new(ctx, OrbType::Quas)?;
@@ -62,53 +58,14 @@ impl MainState {
             game_over: false,
             objects: Vec::new(),
             input_buffer,
-            input_buffer_draw_param,
             last_spell_time: std::time::Duration::new(0, 0),
             speed: 0.0,
             score: 0,
-            score_draw_param,
             settings,
             background_image,
             keybindings,
             orbs,
         })
-    }
-
-    fn get_buffer_text(&self) -> graphics::Text {
-        let input: String = self.input_buffer.buffer.iter().collect();
-        graphics::Text::new(input)
-            .set_scale(self.settings.font_size)
-            .clone()
-    }
-
-    fn calculate_buffer_position(settings: &Settings, ctx: &mut Context) -> graphics::DrawParam {
-        let buffer_text = graphics::TextFragment::new("WWW").scale(settings.font_size);
-        let buffer_text = graphics::Text::new(buffer_text);
-        let buffer_text_boundary = buffer_text.measure(ctx).unwrap();
-
-        let buffer_position = Vec2::new(
-            (settings.window_width / 2.0) - (buffer_text_boundary.x / 2.0),
-            settings.window_height - buffer_text_boundary.y * 2.0,
-        );
-
-        graphics::DrawParam::new()
-            .color(Color::BLACK)
-            .dest(buffer_position)
-    }
-
-    fn calculate_score_position(settings: &Settings, ctx: &mut Context) -> graphics::DrawParam {
-        let score_text = graphics::TextFragment::new("Score 9999").scale(settings.font_size);
-        let score_text = graphics::Text::new(score_text);
-        let score_text_boundary = score_text.measure(ctx).unwrap();
-
-        let score_position = Vec2::new(
-            settings.window_width - score_text_boundary.x,
-            settings.window_height - score_text_boundary.y * 2.0,
-        );
-
-        graphics::DrawParam::new()
-            .color(Color::BLACK)
-            .dest(score_position)
     }
 }
 
