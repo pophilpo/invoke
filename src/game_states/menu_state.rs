@@ -34,7 +34,6 @@ impl MenuState {
         let quit_button = MenuButton::new(ctx, "Quit", "ESC", settings, button_x, quit_button_y)?;
 
         buttons.push(play_button);
-        // buttons.push(settings_button);
         buttons.push(quit_button);
 
         let background_image = graphics::Image::from_bytes(ctx, BACKGROUND_IMAGE)?;
@@ -84,10 +83,10 @@ impl GameState for MenuState {
             );
 
             let quit_game_rect = Rect::new(
-                self.buttons[2].position.x,
-                self.buttons[2].position.y,
-                self.buttons[2].dimensions.w,
-                self.buttons[2].dimensions.h,
+                self.buttons[1].position.x,
+                self.buttons[1].position.y,
+                self.buttons[1].dimensions.w,
+                self.buttons[1].dimensions.h,
             );
 
             if start_game_rect.contains(cursor_location) {
