@@ -21,14 +21,14 @@ pub struct SettingsState {
 }
 
 impl SettingsState {
-    pub fn new(ctx: &mut Context, settings: &Settings) -> GameResult<Self> {
+    pub fn _new(ctx: &mut Context, settings: &Settings) -> GameResult<Self> {
         let background_image = graphics::Image::from_bytes(ctx, BACKGROUND_IMAGE)?;
         let quas = graphics::Image::from_bytes(ctx, QUAS)?;
         let wex = graphics::Image::from_bytes(ctx, WEX)?;
         let exort = graphics::Image::from_bytes(ctx, EXORT)?;
 
         let (quas_draw_param, wex_draw_param, exort_draw_param) =
-            Self::calculate_orb_positions(settings);
+            Self::_calculate_orb_positions(settings);
 
         Ok(Self {
             settings: settings.clone(),
@@ -42,7 +42,7 @@ impl SettingsState {
         })
     }
 
-    fn calculate_orb_positions(
+    fn _calculate_orb_positions(
         settings: &Settings,
     ) -> (
         graphics::DrawParam,
