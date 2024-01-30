@@ -25,16 +25,16 @@ impl MenuState {
         let play_button =
             MenuButton::new(ctx, "Start Game", "RET", settings, button_x, play_button_y)?;
 
-        let settings_button_y = settings.window_height / 2.5;
-        let settings_button =
-            MenuButton::new(ctx, "Settings", "S", settings, button_x, settings_button_y)?;
+        //let settings_button_y = settings.window_height / 2.5;
+        // let settings_button =
+        //     MenuButton::new(ctx, "Settings", "S", settings, button_x, settings_button_y)?;
 
-        // 7/15
-        let quit_button_y = settings.window_height / 2.14;
+        // 7/15. If settings button is in between, it should be / 2.14;
+        let quit_button_y = settings.window_height / 2.5;
         let quit_button = MenuButton::new(ctx, "Quit", "ESC", settings, button_x, quit_button_y)?;
 
         buttons.push(play_button);
-        buttons.push(settings_button);
+        // buttons.push(settings_button);
         buttons.push(quit_button);
 
         let background_image = graphics::Image::from_bytes(ctx, BACKGROUND_IMAGE)?;
@@ -108,7 +108,6 @@ impl GameState for MenuState {
         match keycode.keycode.unwrap() {
             KeyCode::Return => return Ok(Transition::Game),
             KeyCode::Escape => return Ok(Transition::Quit),
-            KeyCode::S => return Ok(Transition::Settings),
             _ => return Ok(Transition::None),
         }
     }
