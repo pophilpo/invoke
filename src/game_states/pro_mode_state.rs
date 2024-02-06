@@ -82,9 +82,9 @@ impl GameState for ProMode {
 
     fn update(&mut self, ctx: &mut Context) -> GameResult<Transition> {
         self.last_spell_time += ctx.time.delta();
-        if self.last_spell_time > std::time::Duration::new(1, 0) || self.objects.is_empty() {
+        if self.last_spell_time > std::time::Duration::new(2, 0) || self.objects.is_empty() {
             self.last_spell_time = std::time::Duration::new(0, 0);
-            self.speed += 0.5;
+            self.speed += 0.3;
             let new_spell = Spell::new(ctx, self.speed, &self.settings);
             self.objects.push(new_spell);
         }
@@ -93,7 +93,7 @@ impl GameState for ProMode {
             return Ok(Transition::GameOver { score: self.score });
         } else {
             for object in self.objects.iter_mut() {
-                object.position.y += object.speed;
+                object.position.y += self.speed;
                 if object.position.y > self.settings.window_height {
                     self.game_over = true;
                     return Ok(Transition::GameOver { score: self.score });
@@ -112,7 +112,7 @@ impl GameState for ProMode {
         }
 
         for (pos, key) in self.input_buffer.buffer.iter().enumerate() {
-            let orb_image = self.orbs.get(&key).unwrap();
+            let orb_image = self.orbs.get(key).unwrap();
 
             let draw_param = self.input_buffer.draw_params[pos];
 
