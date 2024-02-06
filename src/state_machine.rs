@@ -1,5 +1,6 @@
 use crate::game_states::{
     game_over_state::GameOverState, menu_state::MenuState, play_state::MainState,
+    pro_mode_state::ProMode,
 };
 use crate::settings::Settings;
 
@@ -9,6 +10,7 @@ pub enum Transition {
     None,
     Menu,
     Game,
+    ProMode,
     GameOver { score: usize },
     Quit,
 }
@@ -61,6 +63,10 @@ impl EventHandler for StateMachine {
             Transition::Game => {
                 Ok(self.switch_state(Box::new(MainState::new(self.settings.clone(), ctx)?)))
             }
+            Transition::ProMode => {
+                Ok(self.switch_state(Box::new(ProMode::new(self.settings.clone(), ctx)?)))
+            }
+
             Transition::GameOver { score } => Ok(self.switch_state(Box::new(GameOverState::new(
                 ctx,
                 score,
@@ -91,6 +97,10 @@ impl EventHandler for StateMachine {
             Transition::Game => {
                 self.switch_state(Box::new(MainState::new(self.settings.clone(), ctx)?));
             }
+            Transition::ProMode => {
+                self.switch_state(Box::new(ProMode::new(self.settings.clone(), ctx)?));
+            }
+
             Transition::GameOver { score } => {
                 self.switch_state(Box::new(GameOverState::new(
                     ctx,
@@ -120,6 +130,11 @@ impl EventHandler for StateMachine {
             Transition::Game => {
                 self.switch_state(Box::new(MainState::new(self.settings.clone(), ctx)?));
             }
+
+            Transition::ProMode => {
+                self.switch_state(Box::new(ProMode::new(self.settings.clone(), ctx)?));
+            }
+
             Transition::GameOver { score } => {
                 self.switch_state(Box::new(GameOverState::new(
                     ctx,

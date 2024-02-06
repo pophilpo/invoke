@@ -25,12 +25,6 @@ impl MenuState {
         let play_button =
             MenuButton::new(ctx, "Start Game", "RET", settings, button_x, play_button_y)?;
 
-        //let settings_button_y = settings.window_height / 2.5;
-        // let settings_button =
-        //     MenuButton::new(ctx, "Settings", "S", settings, button_x, settings_button_y)?;
-
-        // 7/15. If settings button is in between, it should be / 2.14;
-
         let pro_mode_button_y = settings.window_height / 2.5;
         let pro_mode_button =
             MenuButton::new(ctx, "ProMode", "P", settings, button_x, pro_mode_button_y)?;
@@ -113,6 +107,7 @@ impl GameState for MenuState {
         match keycode.keycode.unwrap() {
             KeyCode::Return => return Ok(Transition::Game),
             KeyCode::Escape => return Ok(Transition::Quit),
+            KeyCode::P => return Ok(Transition::ProMode),
             _ => return Ok(Transition::None),
         }
     }
