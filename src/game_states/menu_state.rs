@@ -30,10 +30,16 @@ impl MenuState {
         //     MenuButton::new(ctx, "Settings", "S", settings, button_x, settings_button_y)?;
 
         // 7/15. If settings button is in between, it should be / 2.14;
-        let quit_button_y = settings.window_height / 2.5;
+
+        let pro_mode_button_y = settings.window_height / 2.5;
+        let pro_mode_button =
+            MenuButton::new(ctx, "ProMode", "P", settings, button_x, pro_mode_button_y)?;
+
+        let quit_button_y = settings.window_height / 2.14;
         let quit_button = MenuButton::new(ctx, "Quit", "ESC", settings, button_x, quit_button_y)?;
 
         buttons.push(play_button);
+        buttons.push(pro_mode_button);
         buttons.push(quit_button);
 
         let background_image = graphics::Image::from_bytes(ctx, BACKGROUND_IMAGE)?;
