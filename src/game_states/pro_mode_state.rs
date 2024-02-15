@@ -25,6 +25,9 @@ pub struct ProMode {
     background_image: graphics::Image,
     keybindings: HashMap<KeyCode, Orb>,
     orbs: HashMap<char, graphics::Image>,
+    required_key_presses: usize,
+    current_key_presses: usize,
+    next_spell: Spell,
 }
 
 impl ProMode {
@@ -54,9 +57,16 @@ impl ProMode {
 
         let input_buffer = InputBuffer::new(&settings);
 
+        let required_key_presses = 4;
+        let current_key_presses = 0;
+
+        let next_spell = Spell::new(ctx, 0.0, &settings);
+        let initial_spell = Spell::new(ctx, 0.3, &settings);
+        let objects = vec![initial_spell];
+
         Ok(Self {
             game_over: false,
-            objects: Vec::new(),
+            objects,
             input_buffer,
             last_spell_time: std::time::Duration::new(0, 0),
             speed: 0.0,
@@ -65,6 +75,9 @@ impl ProMode {
             background_image,
             keybindings,
             orbs,
+            required_key_presses,
+            current_key_presses,
+            next_spell,
         })
     }
 }
@@ -85,8 +98,7 @@ impl GameState for ProMode {
         if self.last_spell_time > std::time::Duration::new(2, 0) || self.objects.is_empty() {
             self.last_spell_time = std::time::Duration::new(0, 0);
             self.speed += 0.3;
-            let new_spell = Spell::new(ctx, self.speed, &self.settings);
-            self.objects.push(new_spell);
+            self.next_spell = Spell::new(ctx, self.speed, &self.settings);
         }
 
         if self.game_over {
@@ -133,22 +145,34 @@ impl GameState for ProMode {
                 KeyCode::Escape => return Ok(Transition::Menu),
 
                 key => {
+                    self.current_key_presses += 1;
+                    println!("Current key presses {}", self.current_key_presses);
                     if let Some(orb) = self.keybindings.get(&key) {
-                        let spell_cast = self.input_buffer.update_buffer(&orb);
+                        let spell_cast = self.input_buffer.update_buffer(orb);
 
                         match spell_cast {
                             None => return Ok(Transition::None),
                             Some(cast) => {
-                                let mut index_to_remove = None;
-                                for (index, object) in self.objects.iter().enumerate() {
-                                    if cast == object.cast {
-                                        self.score += 1;
-                                        index_to_remove = Some(index);
-                                        break;
-                                    }
+                                // Default set to 3
+                                if self.current_key_presses != self.required_key_presses {
+                                    return Ok(Transition::GameOver { score: self.score });
                                 }
-                                if let Some(index) = index_to_remove {
-                                    self.objects.remove(index);
+
+                                if cast == self.objects[0].cast {
+                                    self.score += 1;
+                                    self.objects.remove(0);
+
+                                    self.objects.push(self.next_spell.clone());
+
+                                    self.required_key_presses = self.objects[0]
+                                        .cast
+                                        .iter()
+                                        .zip(cast.iter())
+                                        .filter(|(a, b)| a != b)
+                                        .count()
+                                        + 1;
+                                    println!("Req Press {}", self.required_key_presses);
+                                    self.current_key_presses = 0;
 
                                     return Ok(Transition::None);
                                 } else {

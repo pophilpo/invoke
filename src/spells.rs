@@ -13,6 +13,7 @@ const ICE_WALL_IMAGE: &[u8] = include_bytes!("../resources/ice_wall.png");
 const SUN_STRIKE_IMAGE: &[u8] = include_bytes!("../resources/sun_strike.png");
 const TORNADO_IMAGE: &[u8] = include_bytes!("../resources/tornado.png");
 
+#[derive(Clone, Debug)]
 pub struct Position {
     pub x: f32,
     pub y: f32,
@@ -41,6 +42,7 @@ pub enum SpellType {
     Tornado(Image),
 }
 
+#[derive(Clone, Debug)]
 pub struct Spell {
     pub cast: Vec<char>,
     pub object: Image,
