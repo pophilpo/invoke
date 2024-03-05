@@ -80,6 +80,26 @@ impl ProMode {
             next_spell,
         })
     }
+
+    fn buffer_transition_steps(left: &Vec<char>, right: &Vec<char>) -> u32 {
+        fn buffer_to_bits(buffer: &[char]) -> u64 {
+            buffer.iter().fold(0, |acc, &ch| {
+                let num = match ch {
+                    'Q' => 1,
+                    'W' => 2,
+                    'E' => 3,
+                    _ => 0,
+                };
+                (acc << 2) + num
+            })
+        }
+
+        let a_bits = buffer_to_bits(left);
+        let b_bits = buffer_to_bits(right);
+
+        let diff = a_bits ^ b_bits;
+        diff.count_ones()
+    }
 }
 
 impl GameState for ProMode {
@@ -144,6 +164,7 @@ impl GameState for ProMode {
             match keycode.keycode.unwrap() {
                 KeyCode::Escape => return Ok(Transition::Menu),
 
+                // TODO: atm we don't consider that transitions might need more presses
                 key => {
                     self.current_key_presses += 1;
                     println!("Current key presses {}", self.current_key_presses);
@@ -189,5 +210,24 @@ impl GameState for ProMode {
         } else {
             Ok(Transition::GameOver { score: self.score })
         }
+    }
+}
+
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_buffer_transition_steps() {
+        let left = vec!['Q', 'W', 'E'];
+        let right = vec!['W', 'W', 'W'];
+
+        let steps = ProMode::buffer_transition_steps(&left, &right);
+        assert_eq!(steps, 3);
+
+        let left = vec!['W', 'W', 'W'];
+        let right = vec!['Q', 'W', 'W'];
+
+        let steps = ProMode::buffer_transition_steps(&left, &right);
+        assert_eq!(steps, 1);
     }
 }
