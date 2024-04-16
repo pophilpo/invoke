@@ -17,7 +17,12 @@ pub struct GameOverProState {
 }
 
 impl GameOverProState {
-    pub fn new(ctx: &mut Context, score: usize, settings: &Settings) -> GameResult<Self> {
+    pub fn new(
+        ctx: &mut Context,
+        score: usize,
+        settings: &Settings,
+        info: Option<String>,
+    ) -> GameResult<Self> {
         let mut buttons = Vec::new();
 
         let game_over_text = format!("Score {}", score);
@@ -32,6 +37,7 @@ impl GameOverProState {
             settings,
             game_over_button_x,
             game_over_button_y,
+            None,
         )?;
 
         let go_to_menu_button_x = settings.window_width / 2.5;
@@ -43,6 +49,7 @@ impl GameOverProState {
             settings,
             go_to_menu_button_x,
             go_to_menu_button_y,
+            None,
         )?;
 
         let try_again_button_x = settings.window_width / 1.5;
@@ -54,9 +61,26 @@ impl GameOverProState {
             settings,
             try_again_button_x,
             try_again_button_y,
+            None,
         )?;
 
         buttons.push(game_over_button);
+
+        if let Some(info) = info {
+            let info_button_x = settings.window_width / 2.0;
+            let info_button_y = settings.window_height / 2.0;
+            let info_button = MenuButton::new(
+                ctx,
+                &info,
+                "",
+                settings,
+                info_button_x,
+                info_button_y,
+                Some(1.5),
+            )?;
+
+            buttons.push(info_button);
+        }
         buttons.push(go_to_menu_button);
         buttons.push(try_again_button);
 

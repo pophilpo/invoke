@@ -32,6 +32,7 @@ impl GameOverState {
             settings,
             game_over_button_x,
             game_over_button_y,
+            None,
         )?;
 
         let go_to_menu_button_x = settings.window_width / 2.5;
@@ -43,6 +44,7 @@ impl GameOverState {
             settings,
             go_to_menu_button_x,
             go_to_menu_button_y,
+            None,
         )?;
 
         let try_again_button_x = settings.window_width / 1.5;
@@ -54,6 +56,7 @@ impl GameOverState {
             settings,
             try_again_button_x,
             try_again_button_y,
+            None,
         )?;
 
         buttons.push(game_over_button);

@@ -22,15 +22,30 @@ impl MenuState {
 
         let button_x = settings.window_width / 2.0;
         let play_button_y = settings.window_height / 3.0;
-        let play_button =
-            MenuButton::new(ctx, "Start Game", "RET", settings, button_x, play_button_y)?;
+        let play_button = MenuButton::new(
+            ctx,
+            "Start Game",
+            "RET",
+            settings,
+            button_x,
+            play_button_y,
+            None,
+        )?;
 
         let pro_mode_button_y = settings.window_height / 2.5;
-        let pro_mode_button =
-            MenuButton::new(ctx, "ProMode", "P", settings, button_x, pro_mode_button_y)?;
+        let pro_mode_button = MenuButton::new(
+            ctx,
+            "ProMode",
+            "P",
+            settings,
+            button_x,
+            pro_mode_button_y,
+            None,
+        )?;
 
         let quit_button_y = settings.window_height / 2.14;
-        let quit_button = MenuButton::new(ctx, "Quit", "ESC", settings, button_x, quit_button_y)?;
+        let quit_button =
+            MenuButton::new(ctx, "Quit", "ESC", settings, button_x, quit_button_y, None)?;
 
         buttons.push(play_button);
         buttons.push(pro_mode_button);

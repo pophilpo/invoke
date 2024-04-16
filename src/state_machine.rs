@@ -12,7 +12,7 @@ pub enum Transition {
     Game,
     ProMode,
     GameOver { score: usize },
-    GameOverPro { score: usize },
+    GameOverPro { score: usize, info: Option<String> },
     Quit,
 }
 
@@ -74,8 +74,8 @@ impl EventHandler for StateMachine {
                 &self.settings.clone(),
             )?))),
 
-            Transition::GameOverPro { score } => Ok(self.switch_state(Box::new(
-                GameOverProState::new(ctx, score, &self.settings.clone())?,
+            Transition::GameOverPro { score, info } => Ok(self.switch_state(Box::new(
+                GameOverProState::new(ctx, score, &self.settings.clone(), info)?,
             ))),
 
             Transition::Quit => Ok(ctx.request_quit()),
@@ -114,11 +114,12 @@ impl EventHandler for StateMachine {
                 )?));
             }
 
-            Transition::GameOverPro { score } => {
+            Transition::GameOverPro { score, info } => {
                 self.switch_state(Box::new(GameOverProState::new(
                     ctx,
                     score,
                     &self.settings.clone(),
+                    info,
                 )?));
             }
 
@@ -156,11 +157,12 @@ impl EventHandler for StateMachine {
                 )?));
             }
 
-            Transition::GameOverPro { score } => {
+            Transition::GameOverPro { score, info } => {
                 self.switch_state(Box::new(GameOverProState::new(
                     ctx,
                     score,
                     &self.settings.clone(),
+                    info,
                 )?));
             }
 
