@@ -139,6 +139,9 @@ impl GameState for MainState {
                         match spell_cast {
                             None => return Ok(Transition::None),
                             Some(cast) => {
+                                let mut cast = cast.clone();
+                                cast.sort_unstable();
+
                                 let mut index_to_remove = None;
                                 for (index, object) in self.objects.iter().enumerate() {
                                     if cast == object.cast {
