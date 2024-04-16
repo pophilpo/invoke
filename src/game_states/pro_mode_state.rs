@@ -69,7 +69,7 @@ impl ProMode {
             objects,
             input_buffer,
             last_spell_time: std::time::Duration::new(0, 0),
-            speed: 0.0,
+            speed: 0.3,
             score: 0,
             settings,
             background_image,
