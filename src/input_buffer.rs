@@ -46,11 +46,7 @@ impl InputBuffer {
                 self.buffer.push('E');
                 None
             }
-            OrbType::Invoke => {
-                let mut sorted_buffer = self.buffer.clone();
-                sorted_buffer.sort_unstable();
-                Some(sorted_buffer)
-            }
+            OrbType::Invoke => Some(self.buffer.clone()),
         }
     }
 

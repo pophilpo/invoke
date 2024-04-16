@@ -82,16 +82,28 @@ impl GameState for MenuState {
                 self.buttons[0].dimensions.h,
             );
 
-            let quit_game_rect = Rect::new(
+            let pro_mode_rect = Rect::new(
                 self.buttons[1].position.x,
                 self.buttons[1].position.y,
                 self.buttons[1].dimensions.w,
                 self.buttons[1].dimensions.h,
             );
 
+            let quit_game_rect = Rect::new(
+                self.buttons[2].position.x,
+                self.buttons[2].position.y,
+                self.buttons[2].dimensions.w,
+                self.buttons[2].dimensions.h,
+            );
+
             if start_game_rect.contains(cursor_location) {
                 return Ok(Transition::Game);
             }
+
+            if pro_mode_rect.contains(cursor_location) {
+                return Ok(Transition::ProMode);
+            }
+
             if quit_game_rect.contains(cursor_location) {
                 return Ok(Transition::Quit);
             }

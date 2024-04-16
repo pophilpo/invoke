@@ -5,7 +5,7 @@ use crate::settings::Settings;
 use crate::spells::Spell;
 use crate::state_machine::{GameState, Transition};
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet, VecDeque};
 
 use ggez::{
     glam::*,
@@ -81,24 +81,41 @@ impl ProMode {
         })
     }
 
-    fn buffer_transition_steps(left: &Vec<char>, right: &Vec<char>) -> u32 {
-        fn buffer_to_bits(buffer: &[char]) -> u64 {
-            buffer.iter().fold(0, |acc, &ch| {
-                let num = match ch {
-                    'Q' => 1,
-                    'W' => 2,
-                    'E' => 3,
-                    _ => 0,
-                };
-                (acc << 2) + num
-            })
+    fn buffer_transition_steps(left: &Vec<char>, right: &Vec<char>) -> usize {
+        let mut queue = VecDeque::new();
+        let mut visited = HashSet::new();
+
+        let right_sorted = {
+            let mut tmp = right.clone();
+            tmp.sort_unstable();
+            tmp
+        };
+
+        queue.push_back((left.clone(), 0));
+        visited.insert(left.clone());
+
+        while let Some((current, steps)) = queue.pop_front() {
+            if {
+                let mut tmp = current.clone();
+                tmp.sort_unstable();
+                tmp
+            } == right_sorted
+            {
+                return steps;
+            }
+
+            for &key in ['Q', 'W', 'E'].iter() {
+                let mut new_config = current[1..].to_vec(); // Remove the first character, shift left
+                new_config.push(key); // Append the key to the end
+
+                if visited.insert(new_config.clone()) {
+                    queue.push_back((new_config.clone(), steps + 1));
+                    // Debug: New configuration being enqueued
+                }
+            }
         }
 
-        let a_bits = buffer_to_bits(left);
-        let b_bits = buffer_to_bits(right);
-
-        let diff = a_bits ^ b_bits;
-        diff.count_ones()
+        0
     }
 }
 
@@ -164,7 +181,6 @@ impl GameState for ProMode {
             match keycode.keycode.unwrap() {
                 KeyCode::Escape => return Ok(Transition::Menu),
 
-                // TODO: atm we don't consider that transitions might need more presses
                 key => {
                     self.current_key_presses += 1;
                     println!("Current key presses {}", self.current_key_presses);
@@ -179,19 +195,23 @@ impl GameState for ProMode {
                                     return Ok(Transition::GameOver { score: self.score });
                                 }
 
-                                if cast == self.objects[0].cast {
+                                let mut sorted_cast = cast.clone();
+                                sorted_cast.sort_unstable();
+
+                                if sorted_cast == self.objects[0].cast {
                                     self.score += 1;
                                     self.objects.remove(0);
 
                                     self.objects.push(self.next_spell.clone());
 
-                                    self.required_key_presses = self.objects[0]
-                                        .cast
-                                        .iter()
-                                        .zip(cast.iter())
-                                        .filter(|(a, b)| a != b)
-                                        .count()
-                                        + 1;
+                                    println!(
+                                        "Counting from {:?} --- > {:?}",
+                                        &cast, &self.objects[0].cast
+                                    );
+                                    self.required_key_presses = ProMode::buffer_transition_steps(
+                                        &cast,
+                                        &self.objects[0].cast,
+                                    ) + 1;
                                     println!("Req Press {}", self.required_key_presses);
                                     self.current_key_presses = 0;
 
@@ -229,5 +249,35 @@ mod tests {
 
         let steps = ProMode::buffer_transition_steps(&left, &right);
         assert_eq!(steps, 1);
+
+        let left = vec!['Q', 'W', 'W'];
+        let right = vec!['Q', 'W', 'E'];
+
+        let steps = ProMode::buffer_transition_steps(&left, &right);
+        assert_eq!(steps, 2);
+
+        let left = vec!['Q', 'Q', 'W'];
+        let right = vec!['Q', 'Q', 'E'];
+
+        let steps = ProMode::buffer_transition_steps(&left, &right);
+        assert_eq!(steps, 3);
+
+        let left = vec!['W', 'Q', 'Q'];
+        let right = vec!['Q', 'Q', 'E'];
+
+        let steps = ProMode::buffer_transition_steps(&left, &right);
+        assert_eq!(steps, 1);
+
+        let left = vec!['Q', 'W', 'E'];
+        let right = vec!['E', 'E', 'E'];
+
+        let steps = ProMode::buffer_transition_steps(&left, &right);
+        assert_eq!(steps, 2);
+
+        let left = vec!['Q', 'W', 'E'];
+        let right = vec!['Q', 'W', 'W'];
+
+        let steps = ProMode::buffer_transition_steps(&left, &right);
+        assert_eq!(steps, 3);
     }
 }
