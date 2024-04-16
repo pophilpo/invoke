@@ -10,14 +10,19 @@ use ggez::{
     Context, GameResult,
 };
 
-pub struct GameOverState {
+pub struct GameOverProState {
     background_image: graphics::Image,
     settings: Settings,
     buttons: Vec<MenuButton>,
 }
 
-impl GameOverState {
-    pub fn new(ctx: &mut Context, score: usize, settings: &Settings) -> GameResult<Self> {
+impl GameOverProState {
+    pub fn new(
+        ctx: &mut Context,
+        score: usize,
+        settings: &Settings,
+        info: Option<String>,
+    ) -> GameResult<Self> {
         let mut buttons = Vec::new();
 
         let game_over_text = format!("Score {}", score);
@@ -60,6 +65,22 @@ impl GameOverState {
         )?;
 
         buttons.push(game_over_button);
+
+        if let Some(info) = info {
+            let info_button_x = settings.window_width / 2.0;
+            let info_button_y = settings.window_height / 2.0;
+            let info_button = MenuButton::new(
+                ctx,
+                &info,
+                "",
+                settings,
+                info_button_x,
+                info_button_y,
+                Some(1.5),
+            )?;
+
+            buttons.push(info_button);
+        }
         buttons.push(go_to_menu_button);
         buttons.push(try_again_button);
 
@@ -73,7 +94,7 @@ impl GameOverState {
     }
 }
 
-impl GameState for GameOverState {
+impl GameState for GameOverProState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<Transition> {
         Ok(Transition::None)
     }
@@ -132,7 +153,7 @@ impl GameState for GameOverState {
         _repeat: bool,
     ) -> GameResult<Transition> {
         match keycode.keycode.unwrap() {
-            KeyCode::Return => return Ok(Transition::Game),
+            KeyCode::Return => return Ok(Transition::ProMode),
             KeyCode::Escape => return Ok(Transition::Menu),
             _ => return Ok(Transition::None),
         }

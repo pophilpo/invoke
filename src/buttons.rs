@@ -26,8 +26,12 @@ impl MenuButton {
         settings: &Settings,
         button_x: f32,
         button_y: f32,
+        width: Option<f32>,
     ) -> GameResult<Self> {
-        let button_width = settings.window_width / 4.0;
+        let button_width = match width {
+            Some(w) => settings.window_width / w,
+            None => settings.window_width / 4.0,
+        };
         let button_height = settings.window_height / 20.0;
 
         // Button is always centered by W

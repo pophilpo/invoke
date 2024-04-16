@@ -10,6 +10,8 @@ Nobody ever asked these.
 ## How to play? I have never played Dota 2 but somehow ended up here.
 If you have never played Dota 2 just ignore this game then, there is no fun in playing it without the Dota aspect. But in case you are still interested in trying it out, here is an explanation on how to play.
 
+### Normal mode
+
 You have 3 orbs that you can cast: Quas, Wex and Exort (default keys for casting an orb are Q,W,E respectively)
 
 | Quas                            | Wex                           | Exort                             |
@@ -22,10 +24,16 @@ Here is the list of all possible spells
 ![spells](readme_images/spells.jpg)
 
 So to cast `Cold Snap` you would need to cast 3 `Quas` orbs (hitting Q 3 times by default) and `Invoke` (R by default). Casting 1 correct spell will give you 1 point.
+
+### Pro mode
+Pro mode is a bit more challenging. You will have to cast a spell pressing the minimum required amount of keypresses. So for example if the current orbs you have are W W W and the next spell is Deafening Blast ( Q W E  ) you only need to press Q, W and Invoke (R by default) resulting in 3 keypresses. Hitting more keypresses will result in Game Over. Another example would be casting from Tornado (Q W W) into Alacritty (W W E) this requires only 2 key presses: hitting Exort and Invoke.
+
+Because the order is very important in this mode, there will be only 1 spell on the screen at a time, as opposed to the normal mode.
+
 ## Will this game make a better Dota 2 / Invoker player?
 Not really. I don't think that playing any hero in Dota 2 is about casting spells, but having that extra efficiency will give you an edge over other players.
 
-I do believe though that the PRO mode (which is not implemented yet :skull:) can be very beneficial and will give you a lot of confidence and speed in casting spells.
+I do believe though that the PRO mode can be very beneficial and will give you a lot of confidence and speed in casting spells.
 ## Can I use custom keybindings?
 Yes. Unfortunately at the moment only by editing the `settings.toml` file which is located here:
 
@@ -58,7 +66,7 @@ cargo build --release
 
 - [x] Default game mode
 - [x] Custom keybindings
-- [ ] PRO mode
+- [x] PRO mode
 - [ ] Changing settings in-game
 - [ ] Immortal spell icons
 - [ ] Dynamic image scale (background/spells/orbs)

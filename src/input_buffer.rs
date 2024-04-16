@@ -2,29 +2,27 @@ use ggez::{glam::*, graphics::DrawParam};
 
 use crate::orbs::{Orb, OrbType};
 use crate::settings::Settings;
-use crate::spells::Spell;
 
 pub struct InputBuffer {
     pub buffer: Vec<char>,
-    pub last_spell: Option<Spell>,
-    pub keypress_count: u8,
-
+    pub keypress_count: usize,
     pub draw_params: Vec<DrawParam>,
+
+    pub first_spell: bool,
 }
 
 impl InputBuffer {
     pub fn new(settings: &Settings) -> Self {
         let buffer: Vec<char> = Vec::with_capacity(3);
-        let last_spell = None;
         let keypress_count = 0;
 
         let draw_params = Self::calculate_orb_draw_params(settings);
 
         Self {
             buffer,
-            last_spell,
             keypress_count,
             draw_params,
+            first_spell: true,
         }
     }
 
@@ -47,11 +45,7 @@ impl InputBuffer {
                 self.buffer.push('E');
                 None
             }
-            OrbType::Invoke => {
-                let mut sorted_buffer = self.buffer.clone();
-                sorted_buffer.sort_unstable();
-                return Some(sorted_buffer);
-            }
+            OrbType::Invoke => Some(self.buffer.clone()),
         }
     }
 
