@@ -198,18 +198,6 @@ impl GameState for ProMode {
                             Some(cast) => {
                                 // Default set to 3
                                 if self.current_key_presses != self.required_key_presses {
-                                    let cast_text = cast
-                                        .iter()
-                                        .map(|c| c.to_string())
-                                        .collect::<Vec<String>>()
-                                        .join(" ");
-                                    let spell_text = self.objects[0]
-                                        .cast
-                                        .iter()
-                                        .map(|c| c.to_string())
-                                        .collect::<Vec<String>>()
-                                        .join(" ");
-
                                     let info_text = format!(
                                         "pressed: {}; Required: {}",
                                         self.current_key_presses, self.required_key_presses
