@@ -2,7 +2,6 @@ use ggez::{glam::*, graphics::DrawParam};
 
 use crate::orbs::{Orb, OrbType};
 use crate::settings::Settings;
-use crate::spells::Spell;
 
 pub struct InputBuffer {
     pub buffer: Vec<char>,
@@ -47,64 +46,6 @@ impl InputBuffer {
                 None
             }
             OrbType::Invoke => Some(self.buffer.clone()),
-        }
-    }
-
-    pub fn update_buffer_pro_mode(
-        &mut self,
-        orb: &Orb,
-        last_spell: Option<&Spell>,
-    ) -> Option<Vec<char>> {
-        if orb.orb_type == OrbType::Invoke {
-            let mut sorted_buffer = self.buffer.clone();
-            sorted_buffer.sort_unstable();
-
-            match last_spell {
-                None => {
-                    unreachable!();
-                }
-
-                Some(spell) => {
-                    let required_key_presses = spell
-                        .cast
-                        .iter()
-                        .zip(sorted_buffer.iter())
-                        .filter(|(a, b)| a != b)
-                        .count();
-
-                    println!("Last Spell {:?}", spell.cast);
-                    println!(
-                        "Needed to press: {} | Pressed: {}",
-                        required_key_presses, self.keypress_count
-                    );
-
-                    if required_key_presses != self.keypress_count {
-                        if self.first_spell {
-                            self.keypress_count = 0;
-                            self.first_spell = false;
-                            Some(sorted_buffer)
-                        } else {
-                            Some(Vec::new())
-                        }
-                    } else {
-                        self.keypress_count = 0;
-                        Some(sorted_buffer)
-                    }
-                }
-            }
-        } else {
-            self.keypress_count += 1;
-            if self.buffer.len() == 3 {
-                self.buffer.remove(0);
-            };
-
-            match orb.orb_type {
-                OrbType::Quas => self.buffer.push('Q'),
-                OrbType::Wex => self.buffer.push('W'),
-                OrbType::Exort => self.buffer.push('E'),
-                _ => unreachable!(),
-            };
-            None
         }
     }
 

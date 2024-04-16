@@ -139,13 +139,13 @@ impl GameState for ProMode {
         }
 
         if self.game_over {
-            return Ok(Transition::GameOver { score: self.score });
+            return Ok(Transition::GameOverPro { score: self.score });
         } else {
             for object in self.objects.iter_mut() {
                 object.position.y += self.speed;
                 if object.position.y > self.settings.window_height {
                     self.game_over = true;
-                    return Ok(Transition::GameOver { score: self.score });
+                    return Ok(Transition::GameOverPro { score: self.score });
                 }
             }
         }
@@ -192,7 +192,7 @@ impl GameState for ProMode {
                             Some(cast) => {
                                 // Default set to 3
                                 if self.current_key_presses != self.required_key_presses {
-                                    return Ok(Transition::GameOver { score: self.score });
+                                    return Ok(Transition::GameOverPro { score: self.score });
                                 }
 
                                 let mut sorted_cast = cast.clone();
@@ -219,7 +219,7 @@ impl GameState for ProMode {
                                 } else {
                                     self.game_over = true;
 
-                                    return Ok(Transition::GameOver { score: self.score });
+                                    return Ok(Transition::GameOverPro { score: self.score });
                                 }
                             }
                         }
@@ -228,7 +228,7 @@ impl GameState for ProMode {
                 }
             }
         } else {
-            Ok(Transition::GameOver { score: self.score })
+            Ok(Transition::GameOverPro { score: self.score })
         }
     }
 }
